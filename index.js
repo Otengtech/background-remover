@@ -32,7 +32,7 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "http://127.0.0.1:5173", 
-    "https://background-remover-ochre.vercel.app"
+    "https://removerio.vercel.app/"
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],

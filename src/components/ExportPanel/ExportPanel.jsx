@@ -26,7 +26,7 @@ const ExportPanel = ({ processedImage, onClose }) => {
 
   const BACKEND_URL =
     import.meta.env.VITE_BACKEND_URL ||
-    "https://background-remover-ochre.vercel.app";
+    "https://removerio.vercel.app/";
 
   const PAYSTACK_PUBLIC_KEY =
     "pk_live_f7820d0d82ecf9255b6c9fc69205c9d7b1dc7ce3";
