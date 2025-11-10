@@ -1,5 +1,5 @@
 // App.js - Fixed Mobile Menu and Export Section
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { PremiumProvider } from './hooks/usePremium';
@@ -9,7 +9,7 @@ import {
   FiSettings,
   FiEdit,
   FiImage,
-  FiHome,
+  FiHome, 
   FiUser,
   FiCreditCard,
   FiHelpCircle,
@@ -60,6 +60,31 @@ function App() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const canvasRef = useRef(null);
+
+useEffect(() => {
+    const container = document.getElementById("ad-container-300x250");
+    if (container) {
+      container.innerHTML = "";
+
+      const script = document.createElement("script");
+      script.innerHTML = `
+      atOptions = {
+        'key' : '6676d68ba7d23941b9617404b8afd159',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    `;
+      container.appendChild(script);
+
+      const script2 = document.createElement("script");
+      script2.src =
+        "//www.highperformanceformat.com/6676d68ba7d23941b9617404b8afd159/invoke.js";
+      script2.async = true;
+      container.appendChild(script2);
+    }
+  }, []);
 
   // Add this to your state declarations
   const [helpModal, setHelpModal] = useState({
@@ -542,11 +567,14 @@ function App() {
         {/* Sidebar content - only visible when Tools tab is active on desktop */}
         <div className="hidden lg:block">{renderSidebarContent()}</div>
 
-        {/* Mobile Sidebar - shows all tabs */}
+        {/* Mobile Sidebar all tabs */}
         <div className="lg:hidden">{renderSidebarContent()}</div>
 
         {/* MAIN EDITOR */}
         <div className="lg:col-span-2">
+        <div className="my-2 flex justify-center">
+            <div id="ad-container-300x250"></div>
+          </div>
           <AnimatePresence mode="wait">
             {!originalImage ? (
               <motion.div
