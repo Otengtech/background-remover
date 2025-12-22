@@ -166,7 +166,7 @@
 }
 
 .scroll-reveal.from-bottom {
-  transform: translateY(60px); /* Increased from 40px */
+  transform: translateY(30px); /* Increased from 40px */
 }
 
 .scroll-reveal.fade-only {

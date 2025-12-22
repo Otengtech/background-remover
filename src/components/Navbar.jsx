@@ -255,7 +255,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Auth Section */}
-            <div className="p-4 border-t border-dark-border">
+            <div className="p-4">
               {isAuthenticated ? (
                 <div className="space-y-4">
                   {/* User Info */}

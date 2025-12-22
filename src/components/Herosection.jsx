@@ -72,8 +72,8 @@ const Home = () => {
               </p>
 
               {/* CTA Buttons */}
-              <div 
-                className=" flex gap-4 flex-wrap"
+              <div ref={ctaRef} 
+                className="scroll-reveal from-left flex gap-4 flex-wrap"
                 style={{ transitionDelay: "0.3s" }}
               >
                 {isAuthenticated ? (
