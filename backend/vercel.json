@@ -19,5 +19,7 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  }
+  },
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run vercel-build"
 }
