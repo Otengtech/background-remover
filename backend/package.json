@@ -2,33 +2,30 @@
   "name": "removeit-backend",
   "version": "1.0.0",
   "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
     "vercel-build": "echo 'Building for Vercel...'"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.395.0",
     "axios": "^1.5.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.22.1",
-    "express-rate-limit": "^7.1.5",
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.8.8",
-    "multer": "^2.0.2",
-    "sharp": "^0.34.5",
-    "uuid": "^13.0.0",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.32.6",
     "validator": "^13.11.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
-  },
-  "engines": {
-    "node": ">=18.x",
-    "pnpm": ">=10.26.0"
   }
 }
