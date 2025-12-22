@@ -1,6 +1,9 @@
 // components/ExportPanel/ExportPanel.jsx
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+
+// Add missing FiInfo icon import
+import { FiInfo } from 'react-icons/fi';
 import {
   FiDownload,
   FiX,
@@ -8,6 +11,8 @@ import {
   FiLock,
   FiCheck,
   FiStar,
+  FiZap,
+  FiCamera,
 } from "react-icons/fi";
 import axios from "axios";
 
@@ -178,7 +183,7 @@ const ExportPanel = ({ processedImage, onClose }) => {
   const triggerDownload = (dataURL, extension) => {
     const link = document.createElement("a");
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    link.download = `bg-removed-${timestamp}.${extension}`;
+    link.download = `removeit-pro-${timestamp}.${extension}`;
     link.href = dataURL;
     document.body.appendChild(link);
     link.click();
@@ -293,7 +298,7 @@ const ExportPanel = ({ processedImage, onClose }) => {
 
     setIsProcessingPayment(true);
 
-    const reference = `BGPRO_${Date.now()}_${Math.random()
+    const reference = `REMOVEIT_${Date.now()}_${Math.random()
       .toString(36)
       .substr(2, 9)}`;
 
@@ -326,7 +331,7 @@ const ExportPanel = ({ processedImage, onClose }) => {
           {
             display_name: "Product",
             variable_name: "product",
-            value: "High Quality Background Removal",
+            value: "RemoveIt Pro Premium Download",
           },
           {
             display_name: "Quality",
@@ -363,9 +368,9 @@ const ExportPanel = ({ processedImage, onClose }) => {
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-black border-2 border-green-500 rounded-2xl p-8 w-full max-w-md text-center"
+          className="bg-gray-900 border-2 border-green-500 rounded-2xl p-8 w-full max-w-md text-center"
         >
-          <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <FiCheck size={32} className="text-white" />
           </div>
           <h2 className="text-2xl font-bold text-green-500 mb-2">
@@ -380,24 +385,27 @@ const ExportPanel = ({ processedImage, onClose }) => {
     );
   }
 
-  // Payment Modal (same as before)
+  // Payment Modal
   if (showPayment) {
     return (
       <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-black border-2 border-yellow-400 rounded-2xl p-6 w-full max-w-md"
+          className="bg-gray-900 border-2 border-blue-500 rounded-2xl p-6 w-full max-w-md"
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-yellow-400 flex items-center gap-2">
-              <FiStar className="text-yellow-300" /> Premium Download
+            <h2 className="text-2xl font-bold text-blue-400 flex items-center gap-2">
+              <FiZap className="text-blue-400" /> 
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Premium Download
+              </span>
             </h2>
             <motion.button
               whileHover={{ scale: 1.1, rotate: 90 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setShowPayment(false)}
-              className="p-2 text-yellow-400 hover:bg-black rounded-full border border-yellow-400"
+              className="p-2 text-blue-400 hover:bg-gray-800 rounded-full border border-blue-500"
               disabled={isProcessingPayment}
             >
               <FiX size={20} />
@@ -406,16 +414,19 @@ const ExportPanel = ({ processedImage, onClose }) => {
 
           {/* Order summary */}
           <div className="space-y-4 mb-6">
-            <div className="bg-black p-4 border border-yellow-400 rounded-lg">
+            <div className="bg-gray-800 p-4 border border-blue-500 rounded-xl">
               <div className="flex justify-between text-white font-semibold">
-                <span>High Quality Download</span>
-                <span>GHS {AMOUNT_IN_PESEWAS / 100}</span>
+                <span className="flex items-center gap-2">
+                  <FiStar className="text-yellow-400" />
+                  High Quality Download
+                </span>
+                <span className="text-blue-400">GHS {AMOUNT_IN_PESEWAS / 100}</span>
               </div>
-              <div className="flex justify-between text-yellow-400 font-semibold mt-2">
+              <div className="flex justify-between text-blue-400 font-semibold mt-3">
                 <span>Quality</span>
                 <span>{quality}%</span>
               </div>
-              <div className="flex justify-between text-yellow-400 font-semibold mt-2">
+              <div className="flex justify-between text-blue-400 font-semibold mt-2">
                 <span>Format</span>
                 <span>{format.toUpperCase()}</span>
               </div>
@@ -423,7 +434,7 @@ const ExportPanel = ({ processedImage, onClose }) => {
 
             {/* Email */}
             <div>
-              <label className="block text-yellow-400 font-semibold mb-2 text-sm">
+              <label className="block text-blue-400 font-semibold mb-2 text-sm">
                 Email Address
               </label>
               <input
@@ -431,7 +442,7 @@ const ExportPanel = ({ processedImage, onClose }) => {
                 value={userEmail}
                 onChange={(e) => setUserEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="w-full p-4 bg-black border-2 border-yellow-400/60 text-white placeholder-gray-200 focus:outline-none focus:border-yellow-300 text-sm"
+                className="w-full p-4 bg-gray-800 border-2 border-blue-500/60 text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 rounded-lg"
                 disabled={isProcessingPayment}
               />
             </div>
@@ -442,7 +453,7 @@ const ExportPanel = ({ processedImage, onClose }) => {
               whileTap={{ scale: 0.98 }}
               onClick={initializePayment}
               disabled={isProcessingPayment || !userEmail}
-              className="w-full p-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded-full flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="w-full p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold rounded-lg flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-600 hover:to-purple-600 transition-all"
             >
               <FiCreditCard size={20} />
               <span>
@@ -451,7 +462,7 @@ const ExportPanel = ({ processedImage, onClose }) => {
                   : `Pay GHS ${AMOUNT_IN_PESEWAS / 100}`}
               </span>
               {isProcessingPayment && (
-                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               )}
             </motion.button>
 
@@ -466,42 +477,47 @@ const ExportPanel = ({ processedImage, onClose }) => {
     );
   }
 
-  // Main Export Panel (same as before)
+  // Main Export Panel
   return (
     <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-black border-2 border-yellow-400 rounded-2xl p-6 w-full max-w-2xl"
+        className="bg-gray-900 border-2 border-blue-500 rounded-2xl p-6 w-full max-w-2xl"
       >
         {/* Header & preview */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-yellow-400">Export Image</h2>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            Export Image
+          </h2>
           <motion.button
             whileHover={{ scale: 1.1, rotate: 90 }}
             whileTap={{ scale: 0.9 }}
             onClick={onClose}
-            className="p-2 text-yellow-400 hover:bg-black rounded-full border border-yellow-400"
+            className="p-2 text-blue-400 hover:bg-gray-800 rounded-full border border-blue-500"
           >
             <FiX size={20} />
           </motion.button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8">
           {/* Preview */}
           <div className="space-y-4">
-            <h3 className="text-white font-semibold text-md">Preview</h3>
-            <div className="overflow-hidden border-2 border-yellow-400/80 bg-black">
+            <h3 className="text-blue-400 font-semibold flex items-center gap-2">
+              <FiCamera />
+              Preview
+            </h3>
+            <div className="overflow-hidden border-2 border-blue-500/80 bg-gray-800 rounded-xl">
               <img
                 src={processedImage}
                 alt="Processed preview"
-                className="w-full h-48 object-contain p-2"
+                className="w-full h-64 object-contain p-2"
               />
             </div>
             <div className="text-center text-gray-300 text-sm">
               {imageDimensions.width} × {imageDimensions.height}px
               {quality <= FREE_MAX_QUALITY && (
-                <div className="text-yellow-400 mt-1">
+                <div className="text-blue-400 mt-1">
                   Free version: Max {FREE_MAX_DIMENSION}px
                 </div>
               )}
@@ -512,20 +528,20 @@ const ExportPanel = ({ processedImage, onClose }) => {
           <div className="space-y-6">
             {/* Format selection */}
             <div>
-              <label className="block text-yellow-400 font-semibold mb-3 text-sm">
+              <label className="block text-blue-400 font-semibold mb-3">
                 Format
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-3">
                 {["png", "jpeg", "webp"].map((fmt) => (
                   <motion.button
                     key={fmt}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setFormat(fmt)}
-                    className={`p-3 rounded-full text-sm font-semibold ${
+                    className={`p-3 rounded-lg font-semibold transition-all ${
                       format === fmt
-                        ? "border-yellow-400 bg-yellow-400 text-black"
-                        : " text-yellow-400 hover:bg-yellow-400 hover:text-black"
+                        ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg"
+                        : "bg-gray-800 text-blue-400 border border-blue-500 hover:bg-gray-700"
                     }`}
                   >
                     {fmt.toUpperCase()}
@@ -537,12 +553,12 @@ const ExportPanel = ({ processedImage, onClose }) => {
             {/* Quality slider */}
             <div>
               <div className="flex justify-between mb-3">
-                <label className="text-yellow-400 font-semibold text-sm">
+                <label className="text-blue-400 font-semibold">
                   Quality
                 </label>
                 <span
                   className={`text-sm font-semibold ${
-                    requiresPayment() ? "text-yellow-400" : "text-white"
+                    requiresPayment() ? "text-yellow-400" : "text-blue-400"
                   }`}
                 >
                   {quality}%
@@ -558,11 +574,14 @@ const ExportPanel = ({ processedImage, onClose }) => {
                 step="5"
                 value={quality}
                 onChange={(e) => setQuality(+e.target.value)}
-                className="w-full h-2 bg-white rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-400 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-yellow-400"
+                className="w-full h-2 bg-gray-700 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-blue-500 [&::-webkit-slider-thumb]:to-purple-500 [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white"
               />
-              <div className="flex justify-between text-xs text-gray-300 mt-2">
+              <div className="flex justify-between text-xs text-gray-400 mt-2">
                 <span>Free ({FREE_MAX_QUALITY}%)</span>
-                <span>Pro (100%)</span>
+                <span className="flex items-center gap-1">
+                  <FiZap size={10} />
+                  Pro (100%)
+                </span>
               </div>
             </div>
 
@@ -572,15 +591,15 @@ const ExportPanel = ({ processedImage, onClose }) => {
               disabled={isDownloading}
               whileHover={{ scale: requiresPayment() ? 1.02 : 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`w-full py-4 font-bold rounded-full flex items-center justify-center gap-3 disabled:opacity-50 text-sm ${
+              className={`w-full py-4 font-bold rounded-lg flex items-center justify-center gap-3 disabled:opacity-50 ${
                 requiresPayment()
-                  ? "bg-gradient-to-r from-yellow-400 to-orange-500 text-black"
-                  : "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                  ? "bg-gradient-to-r from-yellow-500 to-amber-500 text-white hover:from-yellow-600 hover:to-amber-600 shadow-lg"
+                  : "bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600"
               }`}
             >
               {isDownloading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   Downloading...
                 </>
               ) : requiresPayment() ? (
@@ -595,11 +614,24 @@ const ExportPanel = ({ processedImage, onClose }) => {
                 </>
               )}
             </motion.button>
+
+            {/* Info box */}
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-blue-500/30">
+              <div className="flex items-start gap-3">
+                <FiInfo className="text-blue-400 mt-0.5" />
+                <div className="text-xs text-gray-300">
+                  <p className="font-semibold text-blue-400 mb-1">What's different?</p>
+                  <p>Free: Max {FREE_MAX_QUALITY}% quality, {FREE_MAX_DIMENSION}px dimension</p>
+                  <p>Premium: Full resolution, 100% quality, no watermark</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>
     </div>
   );
 };
+
 
 export default ExportPanel;

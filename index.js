@@ -19,7 +19,7 @@ app.use(cors({
   origin: [
     "http://localhost:5173",
     "http://127.0.0.1:5173", 
-    "https://removerio.vercel.app",
+    "https://removerio.bond",
     "https://*.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -30,7 +30,7 @@ app.use(cors({
 // 2. Manual CORS middleware (ADD THIS)
 app.use((req, res, next) => {
   const allowedOrigins = [
-    'https://removerio.vercel.app',
+    'https://removerio.bond',
     'http://localhost:5173',
     'http://127.0.0.1:5173'
   ];

@@ -11,10 +11,10 @@ const BackgroundRemovalPanel = ({ onRemoveBackground, onRestoreOriginal }) => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="flex flex-col space-y-6" /* ← h-full removed */
+      className="space-y-6"
     >
       {/* Info Section */}
-      <div className="text-sm text-gray-100">
+      <div className="text-sm text-gray-300">
         <p className="leading-relaxed">
           Remove the background from your image using AI technology.
           <br />
@@ -24,27 +24,44 @@ const BackgroundRemovalPanel = ({ onRemoveBackground, onRestoreOriginal }) => {
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={handleRemove}
-          className="w-full py-3 bg-yellow-400 text-black font-semibold rounded-lg hover:bg-yellow-300 transition"
+          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all shadow-lg"
         >
           Remove Background
-        </button>
+        </motion.button>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={onRestoreOriginal}
-          className="w-full py-3 bg-black border border-yellow-400 text-yellow-400 rounded-lg hover:bg-yellow-400 hover:text-black transition"
+          className="w-full py-3 bg-gray-800 border-2 border-blue-500 text-blue-400 rounded-lg hover:bg-blue-500 hover:text-white transition-all"
         >
           Restore Original
-        </button>
+        </motion.button>
       </div>
 
       {/* Tips */}
-      <div className="bg-black text-sm text-gray-100 space-y-1">
-        <h5 className="text-yellow-400">💡 Tips</h5>
-        <p>• Works best on clear foreground subjects</p>
-        <p>• Images with uniform backgrounds remove more accurately</p>
-        <p>• Restore image anytime using "Restore Original"</p>
+      <div className="bg-gray-800/50 rounded-lg p-4 text-sm text-gray-300 space-y-2">
+        <h5 className="text-blue-400 font-semibold flex items-center gap-2">
+          <span className="text-lg">💡</span> Pro Tips
+        </h5>
+        <ul className="space-y-1">
+          <li className="flex items-start gap-2">
+            <span className="text-blue-400">•</span>
+            <span>Works best on clear foreground subjects</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-400">•</span>
+            <span>Images with uniform backgrounds remove more accurately</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-blue-400">•</span>
+            <span>Restore image anytime using "Restore Original"</span>
+          </li>
+        </ul>
       </div>
     </motion.div>
   );

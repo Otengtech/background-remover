@@ -1,7 +1,7 @@
 // components/Toolbar/Toolbar.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiRotateCcw, FiRotateCw } from 'react-icons/fi';
+import { FiRotateCcw, FiRotateCw, FiSettings, FiZap } from 'react-icons/fi';
 
 const Toolbar = ({ tools, activeTool, onToolSelect, onUndo, onRedo, canUndo, canRedo }) => {
   return (
@@ -9,14 +9,14 @@ const Toolbar = ({ tools, activeTool, onToolSelect, onUndo, onRedo, canUndo, can
       {/* Undo/Redo */}
       <div className="flex space-x-2">
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, backgroundColor: "#1e293b" }}
           whileTap={{ scale: 0.95 }}
           onClick={onUndo}
           disabled={!canUndo}
-          className={`flex-1 py-3 rounded-lg flex items-center justify-center space-x-2 border border-yellow-400 ${
+          className={`flex-1 py-3 rounded-lg flex items-center justify-center space-x-2 border transition-all ${
             canUndo 
-              ? 'bg-black hover:bg-gray-900 text-white' 
-              : 'bg-black text-gray-600 cursor-not-allowed'
+              ? 'border-blue-500 bg-gray-900 hover:bg-gray-800 text-blue-400' 
+              : 'border-gray-700 bg-gray-900 text-gray-600 cursor-not-allowed'
           }`}
         >
           <FiRotateCcw />
@@ -24,14 +24,14 @@ const Toolbar = ({ tools, activeTool, onToolSelect, onUndo, onRedo, canUndo, can
         </motion.button>
         
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, backgroundColor: "#1e293b" }}
           whileTap={{ scale: 0.95 }}
           onClick={onRedo}
           disabled={!canRedo}
-          className={`flex-1 py-3 rounded-lg flex items-center justify-center space-x-2 border border-yellow-400 ${
+          className={`flex-1 py-3 rounded-lg flex items-center justify-center space-x-2 border transition-all ${
             canRedo 
-              ? 'bg-black hover:bg-gray-900 text-white' 
-              : 'bg-black text-gray-600 cursor-not-allowed'
+              ? 'border-blue-500 bg-gray-900 hover:bg-gray-800 text-blue-400' 
+              : 'border-gray-700 bg-gray-900 text-gray-600 cursor-not-allowed'
           }`}
         >
           <FiRotateCw />
@@ -49,20 +49,23 @@ const Toolbar = ({ tools, activeTool, onToolSelect, onUndo, onRedo, canUndo, can
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => {
                 onToolSelect(tool.id);
                 tool.action?.();
               }}
-              className={`w-full p-4 rounded-xl flex items-center space-x-3 transition-all border border-yellow-400 ${
+              className={`w-full p-4 rounded-xl flex items-center space-x-3 transition-all border ${
                 activeTool === tool.id
-                  ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-black'
-                  : 'bg-black hover:bg-yellow-300/50 text-white'
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white border-transparent shadow-lg'
+                  : 'border-blue-500 bg-gray-900 hover:bg-gray-800 text-blue-400'
               }`}
             >
               <Icon size={20} />
               <span className="font-medium">{tool.name}</span>
+              {tool.premium && (
+                <FiZap size={12} className="text-yellow-400 ml-auto" />
+              )}
             </motion.button>
           );
         })}

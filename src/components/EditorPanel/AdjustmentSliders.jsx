@@ -83,8 +83,8 @@ const AdjustmentSliders = ({ adjustments, onAdjustmentsChange }) => {
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-yellow-400 flex items-center space-x-2">
-        <FiSun className="text-yellow-400" />
+      <h3 className="text-lg font-semibold text-blue-400 flex items-center space-x-2">
+        <FiSun className="text-blue-400" />
         <span>Image Adjustments</span>
       </h3>
       
@@ -101,10 +101,10 @@ const AdjustmentSliders = ({ adjustments, onAdjustmentsChange }) => {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 text-white">
-                  <Icon size={16} className="text-yellow-400" />
+                  <Icon size={16} className="text-blue-400" />
                   <span className="font-medium">{config.label}</span>
                 </div>
-                <span className="text-yellow-400 font-mono text-sm">
+                <span className="text-blue-400 font-mono text-sm">
                   {config.value}{config.key === 'rotation' ? '°' : '%'}
                 </span>
               </div>

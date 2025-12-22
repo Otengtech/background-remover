@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import AdjustmentSliders from './AdjustmentSliders';
-import BackgroundRemoval from './BackgroundRemovalPanel';
+import BackgroundRemovalPanel from './BackgroundRemovalPanel';
 
 const EditorPanel = ({ 
   adjustments = {}, 
@@ -29,14 +29,18 @@ const EditorPanel = ({
   };
 
   return (
-    <div className="bg-black space-y-6">
-      <h2 className="text-xl font-bold text-yellow-400 text-center">
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800 p-6 space-y-6"
+    >
+      <h2 className="text-2xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
         {activeTool === 'remove-bg' ? 'Background Removal' : 'Image Adjustments'}
       </h2>
 
       <div className="space-y-6">
         {activeTool === 'remove-bg' ? (
-          <BackgroundRemoval
+          <BackgroundRemovalPanel
             onRemoveBackground={onRemoveBackground}
             onRestoreOriginal={onRestoreOriginal}
           />
@@ -47,7 +51,14 @@ const EditorPanel = ({
           />
         )}
       </div>
-    </div>
+
+      {/* Quick Actions */}
+      <div className="pt-4 border-t border-gray-800">
+        <div className="text-xs text-gray-400 text-center">
+          <p>Use Undo/Redo in sidebar to revert changes</p>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
