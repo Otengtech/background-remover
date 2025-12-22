@@ -1,6 +1,5 @@
 // components/EditorPanel/BackgroundRemovalPanel.jsx
 import React from "react";
-import { motion } from "framer-motion";
 
 const BackgroundRemovalPanel = ({ onRemoveBackground, onRestoreOriginal }) => {
   const handleRemove = () => {
@@ -8,11 +7,7 @@ const BackgroundRemovalPanel = ({ onRemoveBackground, onRestoreOriginal }) => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-6"
-    >
+    <div className="space-y-6 fade-in">
       {/* Info Section */}
       <div className="text-sm text-gray-300">
         <p className="leading-relaxed">
@@ -24,23 +19,19 @@ const BackgroundRemovalPanel = ({ onRemoveBackground, onRestoreOriginal }) => {
 
       {/* Action Buttons */}
       <div className="space-y-3">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <button
           onClick={handleRemove}
-          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all shadow-lg"
+          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:scale-[1.02] active:scale-[0.98]"
         >
           Remove Background
-        </motion.button>
+        </button>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <button
           onClick={onRestoreOriginal}
-          className="w-full py-3 bg-gray-800 border-2 border-blue-500 text-blue-400 rounded-lg hover:bg-blue-500 hover:text-white transition-all"
+          className="w-full py-3 bg-gray-800 border-2 border-blue-500 text-blue-400 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
           Restore Original
-        </motion.button>
+        </button>
       </div>
 
       {/* Tips */}
@@ -63,7 +54,7 @@ const BackgroundRemovalPanel = ({ onRemoveBackground, onRestoreOriginal }) => {
           </li>
         </ul>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

@@ -235,7 +235,7 @@ function App() {
             >
               <h1 className="text-5xl md:text-7xl font-bold mb-6">
                 <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                  RemoveIt Pro
+                  Removeio
                 </span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
@@ -263,15 +263,6 @@ function App() {
                   <FiZap />
                   Start Editing Free
                   <FiArrowRight />
-                </motion.button>
-                
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-8 py-4 bg-gray-800 text-white font-semibold rounded-full text-lg flex items-center gap-2 hover:bg-gray-700 transition-all border border-gray-700"
-                >
-                  <FiPlay />
-                  Watch Demo
                 </motion.button>
               </div>
             </motion.div>
@@ -313,13 +304,13 @@ function App() {
             <motion.h2 
               className="text-4xl md:text-5xl font-bold mb-4 scroll-reveal from-bottom"
             >
-              Why Choose <span className="text-blue-500">RemoveIt</span>?
+              Why Choose <span className="text-blue-500">Removeio</span>?
             </motion.h2>
             <motion.p 
               className="text-xl text-gray-400 scroll-reveal from-bottom"
               style={{ transitionDelay: "0.1s" }}
             >
-              Everything you need for professional image editing
+              Everything you need for professional image background remover
             </motion.p>
           </div>
 
@@ -397,7 +388,7 @@ function App() {
               Ready to Transform Your Images?
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Join thousands of creators, marketers, and professionals who trust RemoveIt
+              Join thousands of creators, marketers, and professionals who trust Removeio
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -407,23 +398,8 @@ function App() {
                 onClick={handleGetStarted}
                 className="px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-full text-lg hover:shadow-2xl hover:shadow-blue-500/50 transition-all"
               >
-                Get Started For Free
+                Get Started
               </motion.button>
-              
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-10 py-4 bg-transparent text-white font-semibold rounded-full text-lg border-2 border-gray-700 hover:border-blue-500 transition-all"
-              >
-                View Pricing
-              </motion.button>
-            </div>
-            
-            <div className="mt-8 text-gray-400 text-sm">
-              <div className="flex items-center justify-center gap-2">
-                <FiCheck className="text-green-500" />
-                No credit card required
-              </div>
             </div>
           </motion.div>
         </div>
@@ -459,7 +435,7 @@ function App() {
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           >
             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-              RemoveIt Pro
+              Removeio
             </h1>
           </button>
         </div>
@@ -521,7 +497,7 @@ function App() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <h2 className="text-xl font-bold text-blue-500">
-                      RemoveIt Pro
+                      Removeio
                     </h2>
                   </div>
                   <motion.button
@@ -792,13 +768,17 @@ function App() {
               {[
                 {
                   title: "Documentation",
-                  description: "Complete guide to using BG Remover Pro",
-                  content: `<h2>Complete Documentation</h2><p>Learn how to use all features...</p>`
+                  description: "Complete guide to using Removerio",
+                  content: `<h2>Complete Documentation</h2><p>Switch to the Background Remover tab and upload high resolution image, click on the remove background button.
+                  After that, click on export image to choose for either free or paid image resolution. Choose your format 
+                  to download it instantly. Payments are secured so your details ate protected. No other user info are collected 
+                  on this website. You can switch to the adjustments tab to also adjust the contrast and other features of you image </p>`
                 },
                 {
-                  title: "💡 Tips & Tricks",
+                  title: "Tips & Tricks",
                   description: "Get the most out of the editor",
-                  content: `<h2>Pro Tips</h2><p>Tips for better editing...</p>`
+                  content: `<h2>Pro Tips</h2><p>Always use high resolution images. Export images using paid plan to enjoy exporting 
+                  fully high image resolution</p>`
                 },
               ].map((item, index) => (
                 <motion.button

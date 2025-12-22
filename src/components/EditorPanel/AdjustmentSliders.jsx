@@ -1,6 +1,5 @@
 // components/AdjustmentSliders/AdjustmentSliders.jsx
 import React from 'react';
-import { motion } from 'framer-motion';
 import { FiSun, FiCircle, FiDroplet, FiZoomIn, FiRotateCw } from "react-icons/fi";
 import { TbBlur } from "react-icons/tb";
 
@@ -92,12 +91,10 @@ const AdjustmentSliders = ({ adjustments, onAdjustmentsChange }) => {
         {adjustmentConfigs.map((config, index) => {
           const Icon = config.icon;
           return (
-            <motion.div
+            <div
               key={config.key}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="space-y-3"
+              className="space-y-3 fade-in"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 text-white">
@@ -123,7 +120,7 @@ const AdjustmentSliders = ({ adjustments, onAdjustmentsChange }) => {
                 <span>{config.min}{config.key === 'rotation' ? '°' : '%'}</span>
                 <span>{config.max}{config.key === 'rotation' ? '°' : '%'}</span>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>

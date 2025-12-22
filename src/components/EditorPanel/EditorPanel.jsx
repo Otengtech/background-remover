@@ -1,6 +1,5 @@
 // components/EditorPanel/EditorPanel.jsx
 import React from 'react';
-import { motion } from 'framer-motion';
 import AdjustmentSliders from './AdjustmentSliders';
 import BackgroundRemovalPanel from './BackgroundRemovalPanel';
 
@@ -29,11 +28,7 @@ const EditorPanel = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800 p-6 space-y-6"
-    >
+    <div className="bg-gray-900/80 backdrop-blur-sm rounded-2xl border border-gray-800 p-6 space-y-6 slide-in">
       <h2 className="text-2xl font-bold text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
         {activeTool === 'remove-bg' ? 'Background Removal' : 'Image Adjustments'}
       </h2>
@@ -58,7 +53,7 @@ const EditorPanel = ({
           <p>Use Undo/Redo in sidebar to revert changes</p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
