@@ -43,3 +43,5 @@ Thumbs.db
 # Build outputs
 build/
 .out/
+.vercel
+.env*.local

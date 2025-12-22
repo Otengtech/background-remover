@@ -1,73 +1,154 @@
 @import url("https://fonts.googleapis.com/css2?family=Macondo&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Sour+Gummy:ital,wght@0,100..900;1,100..900&display=swap");
 
-/* src/styles/globals.css */
 @tailwind base;
-@tailwind components;
 @tailwind utilities;
 
-:root {
-  --color-primary: #1A1F2D;
-  --color-secondary: #475BFD;
-  --color-accent: #8B5CF6;
-  --color-text: #FFFFFF;
-  --color-bg: #0F172A;
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  
+  body {
+    font-family: "Poppins", sans-serif;
+    background-color: #0f0f23;  /* Deep dark blue/black */
+    color: #ffffff;
+    min-height: 100vh;
+  }
 }
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  overflow-x: hidden;
+@layer components {
+  /* Primary Button */
+  .btn-primary {
+    background-color: #7c3aed;  /* Indigo-600 */
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 300ms ease-in-out;
+    transform-origin: center;
+  }
+  
+  .btn-primary:hover {
+    background-color: #6d28d9;  /* Indigo-700 */
+    transform: scale(1.02);
+  }
+  
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Secondary Button */
+  .btn-secondary {
+    background-color: #1a1a2e;  /* Dark card background */
+    border: 1px solid #2d3748;  /* Dark border */
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 300ms ease-in-out;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #2d3748;  /* Gray-800 */
+  }
+  
+  /* Input Field */
+  .input-field {
+    width: 100%;
+    background-color: #1a1a3e;  /* Dark card background */
+    border: 1px solid #2d3748;  /* Dark border */
+    border-radius: 0.5rem;
+    padding-top: 10px;
+    color: white;
+    transition: all 200ms;
+  }
+  
+  .input-field::placeholder {
+    color: #718096;  /* Gray-500 */
+  }
+  
+  .input-field:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px #7c3aed;  /* Primary-500 ring */
+  }
+  
+  /* Card */
+  .card {
+    background-color: #1a1a2e;  /* Dark card background */
+    border: 1px solid #2d3748;  /* Dark border */
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Glass Effect */
+  .glass-effect {
+    backdrop-filter: blur(12px);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }
 
-/* === GRADIENT TEXT === */
-.gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* === GLASS MORPHISM === */
-.glass-effect {
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+::-webkit-scrollbar-track {
+  background-color: #0f0f23;  /* Dark background */
 }
 
-/* === CARD HOVER EFFECTS === */
-.hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+::-webkit-scrollbar-thumb {
+  background-color: #7c3aed;  /* Primary color */
+  border-radius: 9999px;
 }
 
-.hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6d28d9;  /* Primary hover */
 }
 
-/* === BUTTON STYLES === */
-.btn-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  position: relative;
-  overflow: hidden;
+
+/* === CORE ANIMATIONS === */
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.btn-gradient::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.btn-gradient:hover::after {
-  left: 100%;
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
-/* === ANIMATION CLASSES === */
+/* === BASE ANIMATION CLASSES === */
+/* Apply to any element you want to animate */
 .scroll-reveal {
   opacity: 0;
   will-change: transform, opacity;
@@ -75,17 +156,17 @@ body {
   transform-style: preserve-3d;
 }
 
-/* Direction modifiers */
+/* Direction modifiers - start positions */
 .scroll-reveal.from-left {
-  transform: translateX(-60px);
+  transform: translateX(-60px); /* Increased from 40px */
 }
 
 .scroll-reveal.from-right {
-  transform: translateX(60px);
+  transform: translateX(60px); /* Increased from 40px */
 }
 
 .scroll-reveal.from-bottom {
-  transform: translateY(60px);
+  transform: translateY(60px); /* Increased from 40px */
 }
 
 .scroll-reveal.fade-only {
@@ -93,17 +174,18 @@ body {
   transform: none;
 }
 
-/* Active state when visible */
+/* Active state when visible - SLOWER ANIMATIONS */
 .scroll-reveal.visible {
   opacity: 1;
   transform: translateX(0) translateY(0);
-  transition: opacity 1s ease-out,
-              transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: opacity 1s ease-out, /* Increased from 0.6s */
+              transform 1.2s cubic-bezier(0.19, 1, 0.22, 1); /* Softer curve */
 }
 
-/* For smooth animations */
+/* === MAP ELEMENTS OPTIMIZATION === */
+/* For smooth .map() animations - LONGER DELAYS */
 .stagger-container .scroll-reveal {
-  transition-delay: calc(var(--stagger-index, 0) * 0.15s);
+  transition-delay: calc(var(--stagger-index, 0) * 0.15s); /* Increased from 0.1s */
 }
 
 /* Prevent animation conflicts */
@@ -111,277 +193,90 @@ body {
   pointer-events: none;
 }
 
-/* Section entrance */
+/* === PERFORMANCE OPTIMIZATIONS === */
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal {
+    transition: opacity 0.6s ease-out !important; /* Increased from 0.3s */
+    transform: none !important;
+  }
+}
+
+/* Mobile adjustments */
+
+/* === ANIMATION PRESETS === */
+/* Slow & dramatic */
+.scroll-reveal.slow-dramatic {
+  transition: opacity 1.4s ease-out,
+              transform 1.8s cubic-bezier(0.19, 1, 0.22, 1) !important;
+}
+
+/* Smooth fade */
+.scroll-reveal.smooth-fade {
+  transition: opacity 1.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Section entrance (for whole sections) */
 .scroll-reveal.section-entrance {
   transform: translateY(80px);
   transition: opacity 1.2s ease-out,
               transform 1.6s cubic-bezier(0.175, 0.885, 0.32, 1.1);
 }
+/* Add these animations to your CSS file */
 
-/* === GRADIENT BORDERS === */
-.gradient-border {
-  position: relative;
-  border: double 2px transparent;
-  background-image: linear-gradient(var(--color-bg), var(--color-bg)), 
-                    linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-}
-
-/* === CUSTOM SCROLLBAR === */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.8);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #5a67d8 0%, #6d28d9 100%);
-}
-
-/* Add these styles to your App.css */
-
-/* Custom slider thumb */
-.slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 8px;
-  border-radius: 4px;
-  background: linear-gradient(90deg, 
-    rgba(59, 130, 246, 0.5) 0%, 
-    rgba(139, 92, 246, 0.5) 100%);
-}
-
-.slider-thumb::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  border: 2px solid white;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-  transition: all 0.2s ease;
-}
-
-.slider-thumb::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.7);
-}
-
-.slider-thumb::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  border: 2px solid white;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-}
-
-.slider-thumb::-moz-range-track {
-  background: linear-gradient(90deg, 
-    rgba(59, 130, 246, 0.5) 0%, 
-    rgba(139, 92, 246, 0.5) 100%);
-  height: 8px;
-  border-radius: 4px;
-}
-
-/* Input range focus styles */
-.slider-thumb:focus {
-  outline: none;
-}
-
-.slider-thumb:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-}
-
-/* Scrollbar styling for the entire app */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #3b82f6 #1f2937;
-}
-
-/* For Webkit browsers */
-*::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-*::-webkit-scrollbar-track {
-  background: #1f2937;
-  border-radius: 4px;
-}
-
-*::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-  border-radius: 4px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-}
-
-/* Loading animation */
-@keyframes pulse {
-  0%, 100% {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
     opacity: 1;
   }
-  50% {
-    opacity: 0.5;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* === RESPONSIVE TYPOGRAPHY === */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 2.5rem !important;
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
   }
-  
-  h2 {
-    font-size: 2rem !important;
-  }
-  
-  .scroll-reveal.from-left,
-  .scroll-reveal.from-right {
+  to {
     transform: translateX(0);
   }
 }
 
-/* === SHIMMER EFFECT === */
-.shimmer {
-  position: relative;
-  overflow: hidden;
-}
-
-.shimmer::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  transform: rotate(30deg);
-  animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%) rotate(30deg);
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
   }
-  100% {
-    transform: translateX(100%) rotate(30deg);
+  to {
+    transform: translateX(-100%);
   }
 }
 
-/* === PERFORMANCE OPTIMIZATIONS === */
-@media (prefers-reduced-motion: reduce) {
-  .scroll-reveal {
-    transition: opacity 0.6s ease-out !important;
-    transform: none !important;
-  }
-  
-  .btn-gradient::after,
-  .shimmer::before {
-    animation: none;
-  }
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* === GRID PATTERN BACKGROUND === */
-.grid-pattern {
-  background-image: 
-    linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
-  background-size: 50px 50px;
+.animate-fade-out {
+  animation: fadeOut 0.3s ease-out forwards;
 }
 
-/* TriangleLoader.css */
-.triangle-loader {
-  position: relative;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out forwards;
 }
 
-.triangle-loader .dot {
-  position: absolute;
-  border-radius: 50%;
-  animation-duration: 1.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
+.animate-slide-out-left {
+  animation: slideOutLeft 0.3s ease-out forwards;
 }
 
-.triangle-loader .dot-1 {
-  animation-name: dot1-animation;
-}
-
-.triangle-loader .dot-2 {
-  animation-name: dot2-animation;
-}
-
-.triangle-loader .dot-3 {
-  animation-name: dot3-animation;
-}
-
-@keyframes dot1-animation {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(0, -100%);
-  }
-  50% {
-    transform: translate(86.6%, 50%);
-  }
-  75% {
-    transform: translate(-86.6%, 50%);
-  }
-}
-
-@keyframes dot2-animation {
-  0%, 100% {
-    transform: translate(86.6%, 50%);
-  }
-  25% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(0, -100%);
-  }
-  75% {
-    transform: translate(-86.6%, 50%);
-  }
-}
-
-@keyframes dot3-animation {
-  0%, 100% {
-    transform: translate(-86.6%, 50%);
-  }
-  25% {
-    transform: translate(86.6%, 50%);
-  }
-  50% {
-    transform: translate(0, 0);
-  }
-  75% {
-    transform: translate(0, -100%);
-  }
+/* Ensure smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
