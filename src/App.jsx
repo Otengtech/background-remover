@@ -401,6 +401,10 @@ function App() {
                 Get Started
               </motion.button>
             </div>
+
+            <p className="text-lg text-gray-300 mb-8">
+              Contact Ebenezer Oteng (Owner) on (+233 54 477 9594) or email (otengebenezer326@gmail.com)
+            </p>
           </motion.div>
         </div>
       </section>
