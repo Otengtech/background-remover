@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   const getUserData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/auth/profile`
+        `${import.meta.env.VITE_API_URL}/auth/profile`
       );
       
       if (response.data.success) {
@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
+        `${import.meta.env.VITE_API_URL}/auth/login`,
         { email, password }
       );
       
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/register`,
+        `${import.meta.env.VITE_API_URL}/auth/register`,
         { name, email, password }
       );
       
@@ -129,7 +129,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/auth/profile`,
+        `${import.meta.env.VITE_API_URL}/auth/profile`,
         profileData
       );
       
@@ -157,7 +157,7 @@ export const AuthProvider = ({ children }) => {
       // Call logout API if token exists
       if (token) {
         await axios.post(
-          `${process.env.REACT_APP_API_URL}/auth/logout`,
+          `${import.meta.env.VITE_API_URL}/auth/logout`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
