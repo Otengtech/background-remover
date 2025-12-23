@@ -277,9 +277,6 @@ const startServer = async () => {
     const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`
 🚀 Server running on port ${PORT}
-🔗 Health: http://localhost:${PORT}/api/health
-🔗 CORS Test: http://localhost:${PORT}/api/cors-test
-✅ Allowed Origins: ${allowedOrigins.join(', ')}
       `);
     });
 

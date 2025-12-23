@@ -18,6 +18,7 @@ import Checkout from "./pages/Checkout";
 import Features from "./pages/Features";
 import Profile from "./pages/Profile";
 import Support from "./pages/Support";
+import AccountSetting from "./pages/AccountSetting";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
               <Route path="/features" element={<Features />} />
               <Route path="/support" element={<Support />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/settings" element={<AccountSetting />} />
               <Route
                 path="/dashboard"
                 element={

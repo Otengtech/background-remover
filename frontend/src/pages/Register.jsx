@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useScrollReveal } from '../hooks/useIntersectionObserver';
-import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiCheck } from 'react-icons/fi';
+import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiCheck, FiImage, FiZap, FiShield, FiUsers } from 'react-icons/fi';
 import Alert from '../components/Alert';
 import { validateEmail, validatePassword, validateName, getPasswordStrength } from '../utils/validators';
 
@@ -121,33 +121,86 @@ const Register = () => {
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-900 to-gray-950 animate-fade-in">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center space-x-2 mb-4">
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-              Removeio
-            </span>
-          </Link>
-          <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
-          <p className="text-gray-400">Start removing backgrounds like a pro</p>
+    <div className="min-h-[90vh] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-900 to-gray-950 animate-fade-in">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        
+        {/* Left Section - Info */}
+        <div className="text-white space-y-8 p-6 lg:p-10">
+          <div>
+            <h1 className="text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Create Account
+            </h1>
+            <p className="text-xl text-gray-300 mb-8">
+              Create your account and unlock professional background removal tools in seconds.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex items-start space-x-4">
+              <div className="bg-blue-500/20 p-3 rounded-xl">
+                <FiImage className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-1">AI-Powered Removal</h3>
+                <p className="text-gray-400">Remove backgrounds instantly with advanced AI technology.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="bg-purple-500/20 p-3 rounded-xl">
+                <FiZap className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-1">Lightning Fast</h3>
+                <p className="text-gray-400">Process images in seconds, not minutes.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="bg-green-500/20 p-3 rounded-xl">
+                <FiShield className="w-6 h-6 text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-1">Secure & Private</h3>
+                <p className="text-gray-400">Your images are processed securely and deleted automatically.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-4">
+              <div className="bg-pink-500/20 p-3 rounded-xl">
+                <FiUsers className="w-6 h-6 text-pink-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-1">Join Thousands</h3>
+                <p className="text-gray-400">Be part of our growing community of creators and professionals.</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Alert */}
-        {alert && (
-          <Alert
-            type={alert.type}
-            message={alert.message}
-            onClose={() => setAlert(null)}
-          />
-        )}
+        {/* Right Section - Form */}
+        <div className="w-full max-w-md lg:max-w-lg mx-auto">
+          {/* Header */}
+          
 
-        {/* Form Container */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 shadow-xl">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* All form fields with animation classes */}
-            <div className="space-y-6">
+          {/* Alert */}
+          {alert && (
+            <div className="mb-6">
+              <Alert
+                type={alert.type}
+                message={alert.message}
+                onClose={() => setAlert(null)}
+              />
+            </div>
+          )}
+
+          {/* Form Container */}
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-8 shadow-2xl">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
+            <p className="text-gray-400">Sign up to start using Removeio</p>
+          </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Field */}
               <div>
                 <label className="block text-sm font-medium text-gray-200 mb-2">
@@ -203,7 +256,7 @@ const Register = () => {
                     value={formData.password}
                     onChange={handleChange}
                     className={`w-full bg-gray-900/50 border ${errors.password ? 'border-red-500' : 'border-gray-600'} text-white rounded-lg py-3 px-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
-                    placeholder="Password"
+                    placeholder="Create a strong password"
                   />
                   <button
                     type="button"
@@ -261,7 +314,7 @@ const Register = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     className={`w-full bg-gray-900/50 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-600'} text-white rounded-lg py-3 px-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
-                    placeholder="Confirm Password"
+                    placeholder="Confirm your password"
                   />
                   <button
                     type="button"
@@ -275,76 +328,80 @@ const Register = () => {
                   <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>
                 )}
               </div>
-            </div>
 
-            {/* Terms Agreement */}
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="terms"
-                className="w-4 h-4 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-600 focus:ring-offset-gray-900 focus:ring-2 focus:ring-offset-2"
-                required
-              />
-              <label htmlFor="terms" className="ml-2 text-sm text-gray-300">
-                I agree to the{' '}
-                <Link to="/terms" className="text-blue-400 hover:text-blue-300 hover:underline">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link to="/privacy" className="text-blue-400 hover:text-blue-300 hover:underline">
-                  Privacy Policy
-                </Link>
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
-            >
-              {loading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
-                  Creating Account...
-                </>
-              ) : (
-                'Create Account'
-              )}
-            </button>
-          </form>
-
-          {/* Divider & Login Link */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-700"></div>
+              {/* Terms Agreement */}
+              <div className="flex items-start">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  className="w-4 h-4 mt-1 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-600 focus:ring-offset-gray-900 focus:ring-2 focus:ring-offset-2"
+                  required
+                />
+                <label htmlFor="terms" className="ml-2 text-sm text-gray-300">
+                  I agree to the{' '}
+                  <Link to="/terms" className="text-blue-400 hover:text-blue-300 hover:underline">
+                    Terms of Service
+                  </Link>{' '}
+                  and{' '}
+                  <Link to="/privacy" className="text-blue-400 hover:text-blue-300 hover:underline">
+                    Privacy Policy
+                  </Link>
+                </label>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-800/50 text-gray-400">
-                  Already have an account?
-                </span>
-              </div>
-            </div>
 
-            <div className="mt-6">
-              <Link
-                to="/login"
-                className="block w-full text-center bg-gray-700/50 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-200"
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
               >
-                Sign In to Your Account
-              </Link>
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+                    Creating Account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
+              </button>
+            </form>
+
+            {/* Divider & Login Link */}
+            <div className="mt-8">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-700"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-gray-800/50 text-gray-400">
+                    Already have an account?
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-3">
+                <Link
+                  to="/login"
+                  className="block w-full text-center text-white font-medium transition-all duration-200"
+                >
+                  Login to account
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Demo Note */}
-        <p className="mt-6 text-center text-sm text-gray-400">
-          Already have an account?{' '}
-          <Link to="/login" className="text-blue-400 hover:text-blue-300 hover:underline">
-            Sign in here
-          </Link>
-        </p>
+          {/* Footer Note */}
+          <p className="mt-6 text-center text-sm text-gray-400">
+            By creating an account, you agree to our{' '}
+            <Link to="/terms" className="text-blue-400 hover:text-blue-300 hover:underline">
+              Terms
+            </Link>{' '}
+            and{' '}
+            <Link to="/privacy" className="text-blue-400 hover:text-blue-300 hover:underline">
+              Privacy Policy
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

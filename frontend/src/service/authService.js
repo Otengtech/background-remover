@@ -11,11 +11,9 @@ export const authService = {
     return response.data;
   },
 
-  getCurrentUser: async (token) => {
-    const response = await api.get('/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.data.user;
+  getCurrentUser: async () => {
+    const response = await api.get('/auth/me');
+    return response.data.user; // ✅ .user (not .data)
   },
 
   updateDetails: async (userData) => {
