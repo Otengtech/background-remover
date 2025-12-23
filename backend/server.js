@@ -35,7 +35,8 @@ const allowedOrigins = [
   process.env.FRONTEND_URL
 ].filter(Boolean);
 
-app.use(cors({
+// Define CORS options once
+const corsOptions = {
   origin: function(origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
@@ -43,13 +44,36 @@ app.use(cors({
     if (allowedOrigins.includes(origin) || allowedOrigins.some(allowed => origin.includes(allowed))) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// ✅ CRITICAL FIX: Handle preflight OPTIONS requests with SAME configuration
+app.options('*', cors(corsOptions)); // This line was the problem
+
+// Manual preflight handler for extra safety
+app.options('*', (req, res) => {
+  const origin = req.headers.origin;
+  
+  // Check if origin is allowed
+  if (!origin || allowedOrigins.includes(origin) || allowedOrigins.some(allowed => origin.includes(allowed))) {
+    res.header('Access-Control-Allow-Origin', origin || allowedOrigins[0]);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    return res.status(200).end();
+  }
+  
+  res.status(403).json({ error: 'CORS not allowed' });
+});
 
 // Set security headers
 app.use(helmet({
@@ -64,8 +88,18 @@ app.use(helmet({
   },
 }));
 
-// Handle preflight requests
-app.options('*', cors());
+// Add CORS headers to all responses (belt and suspenders approach)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  // Add CORS headers to every response
+  if (origin && (allowedOrigins.includes(origin) || allowedOrigins.some(allowed => origin.includes(allowed)))) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
+  
+  next();
+});
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -114,6 +148,20 @@ const importRoutes = async () => {
       });
     });
 
+    // Test CORS endpoint
+    app.get('/api/cors-test', (req, res) => {
+      res.json({
+        success: true,
+        message: 'CORS test successful',
+        origin: req.headers.origin,
+        allowedOrigins: allowedOrigins,
+        headers: req.headers,
+        timestamp: new Date().toISOString()
+      });
+    });
+
+    app.options('/api/cors-test', cors(corsOptions));
+
     // Mount routes
     app.use('/api/auth', authRoutes);
     app.use('/api/payments', paymentRoutes);
@@ -131,7 +179,8 @@ const importRoutes = async () => {
           auth: '/api/auth',
           payments: '/api/payments',
           images: '/api/images',
-          health: '/api/health'
+          health: '/api/health',
+          corsTest: '/api/cors-test'
         }
       });
     });
@@ -175,6 +224,7 @@ const importRoutes = async () => {
           'GET /',
           'GET /api',
           'GET /api/health',
+          'GET /api/cors-test',
           'POST /api/auth/register',
           'POST /api/auth/login',
           'GET /api/auth/me',
@@ -231,6 +281,8 @@ const initializeServer = async () => {
       const server = app.listen(PORT, () => {
         console.log(`🚀 Server running on port ${PORT}`);
         console.log(`🔗 Health: http://localhost:${PORT}/api/health`);
+        console.log(`🔗 CORS Test: http://localhost:${PORT}/api/cors-test`);
+        console.log(`✅ Allowed Origins:`, allowedOrigins);
       });
 
       // Handle graceful shutdown
