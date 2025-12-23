@@ -98,6 +98,9 @@ const Navbar = () => {
               <Link to="/about" className="text-gray-300 hover:text-white transition-colors duration-200">
                 About
               </Link>
+              <Link to="/support" className="text-gray-300 hover:text-white transition-colors duration-200">
+                Support
+              </Link>
             </div>
 
             {/* Desktop Auth Buttons */}
@@ -126,7 +129,7 @@ const Navbar = () => {
                         className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800 transition-colors duration-200"
                       >
                         <RiDashboardLine className="w-4 h-4" />
-                        <span>Dashboard</span>
+                        <span>BG Remover</span>
                       </Link>
                       <Link
                         to="/profile"
@@ -277,7 +280,7 @@ const Navbar = () => {
                       className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200"
                     >
                       <RiDashboardLine className="w-5 h-5" />
-                      <span>Dashboard</span>
+                      <span>BG Remover</span>
                     </Link>
                     <Link
                       to="/profile"

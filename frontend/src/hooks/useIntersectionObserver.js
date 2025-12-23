@@ -30,7 +30,7 @@ export function useScrollReveal(options = {}) {
       },
        {
         threshold: 0.15,
-        rootMargin: "0px 0px -30% 0px",  // Changed from -10% to -30%
+        rootMargin: "0px 0px -10% 0px",  // Changed from -10% to -30%
         ...options,
       }
     );

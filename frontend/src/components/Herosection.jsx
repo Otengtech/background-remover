@@ -77,12 +77,20 @@ const Home = () => {
                 style={{ transitionDelay: "0.3s" }}
               >
                 {isAuthenticated ? (
+                  <div className="flex items-center justify-center space-x-3">
                   <Link
                     to="/dashboard"
                     className="btn-primary px-8 py-4 flex items-center gap-2"
                   >
-                    Dashboard <FiArrowRight />
+                    BG Remover<FiArrowRight />
                   </Link>
+                  <Link
+                    to="/support"
+                    className="btn-primary px-8 py-4 flex items-center gap-2"
+                  >
+                    Support<FiArrowRight />
+                  </Link>
+                  </div>
                 ) : (
                   <>
                     <Link
