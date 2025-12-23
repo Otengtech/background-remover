@@ -217,7 +217,7 @@ const FeaturesSection = () => {
       <div className="container mx-auto max-w-6xl">
         <h2 
           ref={sectionRef}
-          className="scroll-reveal from-bottom text-center text-4xl md:text-5xl font-bold text-[#7c3aed] mb-16"
+          className="scroll-reveal from-bottom text-center text-4xl md:text-5xl font-bold text-white mb-16"
         >
           Why Choose Removeio
         </h2>

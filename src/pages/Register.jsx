@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useScrollReveal } from '../hooks/useIntersectionObserver';
 import { FiMail, FiLock, FiUser, FiEye, FiEyeOff, FiCheck } from 'react-icons/fi';
 import Alert from '../components/Alert';
 import { validateEmail, validatePassword, validateName, getPasswordStrength } from '../utils/validators';
@@ -17,7 +18,7 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState(null);
-  const [passwordStrength, setPasswordStrength] = useState({ score: 0, level: 'Weak', color: 'text-red-500' });
+  const [passwordStrength, setPasswordStrength] = useState({ score: 0, level: 'Weak', color: 'text-red-400' });
   
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ const Register = () => {
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -37,7 +37,6 @@ const Register = () => {
       }));
     }
     
-    // Update password strength
     if (name === 'password') {
       setPasswordStrength(getPasswordStrength(value));
     }
@@ -113,12 +112,25 @@ const Register = () => {
     { text: 'Contains special character', met: /[^A-Za-z0-9]/.test(formData.password) },
   ];
 
+  const passwordStrengthColors = [
+    'bg-red-500',
+    'bg-red-500',
+    'bg-yellow-500',
+    'bg-green-500',
+    'bg-green-500'
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 animate-fade-in">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-gray-900 to-gray-950 animate-fade-in">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Create Account</h1>
+          <Link to="/" className="inline-flex items-center space-x-2 mb-4">
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Removeio
+            </span>
+          </Link>
+          <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
           <p className="text-gray-400">Start removing backgrounds like a pro</p>
         </div>
 
@@ -131,150 +143,169 @@ const Register = () => {
           />
         )}
 
-        {/* Form */}
-        <div className="card">
+        {/* Form Container */}
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 shadow-xl">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name Field */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={`input-field pl-10 py-3 ${errors.name ? 'border-red-500' : ''}`}
-                  placeholder="John Doe"
-                />
-              </div>
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-400">{errors.name}</p>
-              )}
-            </div>
-
-            {/* Email Field */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`input-field pl-10 py-3 ${errors.email ? 'border-red-500' : ''}`}
-                  placeholder="you@example.com"
-                />
-              </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-400">{errors.email}</p>
-              )}
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={`input-field pl-10 py-3 pr-10 ${errors.password ? 'border-red-500' : ''}`}
-                  placeholder="Password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                >
-                  {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
-                </button>
-              </div>
-              
-              {/* Password Strength */}
-              <div className="mt-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Password strength:</span>
-                  <span className={`text-sm font-medium ${passwordStrength.color}`}>
-                    {passwordStrength.level}
-                  </span>
-                </div>
-                <div className="h-1 bg-gray-700 rounded-full mt-1 overflow-hidden">
-                  <div 
-                    className={`h-full transition-all duration-300 ${
-                      passwordStrength.score === 0 ? 'w-0 bg-red-500' :
-                      passwordStrength.score === 1 ? 'w-1/4 bg-red-500' :
-                      passwordStrength.score === 2 ? 'w-1/2 bg-yellow-500' :
-                      passwordStrength.score === 3 ? 'w-3/4 bg-green-500' :
-                      'w-full bg-green-500'
-                    }`}
+            {/* All form fields with animation classes */}
+            <div className="space-y-6">
+              {/* Name Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={`w-full bg-gray-900/50 border ${errors.name ? 'border-red-500' : 'border-gray-600'} text-white rounded-lg py-3 px-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                    placeholder="John Doe"
                   />
                 </div>
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-400">{errors.name}</p>
+                )}
               </div>
-              
-              {/* Password Requirements */}
-              <div className="mt-3 space-y-1">
-                {passwordRequirements.map((req, index) => (
-                  <div key={index} className="flex items-center">
-                    <FiCheck className={`w-3 h-3 mr-2 ${req.met ? 'text-green-500' : 'text-gray-500'}`} />
-                    <span className={`text-xs ${req.met ? 'text-green-400' : 'text-gray-500'}`}>
-                      {req.text}
-                    </span>
+
+              {/* Email Field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full bg-gray-900/50 border ${errors.email ? 'border-red-500' : 'border-gray-600'} text-white rounded-lg py-3 px-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                    placeholder="you@example.com"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-400">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Password Field with requirements */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={`w-full bg-gray-900/50 border ${errors.password ? 'border-red-500' : 'border-gray-600'} text-white rounded-lg py-3 px-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                    placeholder="Password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white p-1"
+                  >
+                    {showPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  </button>
+                </div>
+                
+                {/* Password Strength & Requirements */}
+                {formData.password && (
+                  <div className="mt-4 p-3 bg-gray-900/30 rounded-lg border border-gray-700">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-sm text-gray-300">Password strength:</span>
+                      <span className={`text-sm font-medium ${passwordStrength.color}`}>
+                        {passwordStrength.level}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-gray-700 rounded-full overflow-hidden mb-3">
+                      <div 
+                        className={`h-full transition-all duration-300 ${passwordStrengthColors[passwordStrength.score]}`}
+                        style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      {passwordRequirements.map((req, idx) => (
+                        <div key={idx} className="flex items-center">
+                          <FiCheck className={`w-3 h-3 mr-2 ${req.met ? 'text-green-500' : 'text-gray-500'}`} />
+                          <span className={`text-xs ${req.met ? 'text-green-400' : 'text-gray-500'}`}>
+                            {req.text}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
+                
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-400">{errors.password}</p>
+                )}
               </div>
-              
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-400">{errors.password}</p>
-              )}
+
+              {/* Confirm Password */}
+              <div>
+                <label className="block text-sm font-medium text-gray-200 mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className={`w-full bg-gray-900/50 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-600'} text-white rounded-lg py-3 px-10 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                    placeholder="Confirm Password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white p-1"
+                  >
+                    {showConfirmPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>
+                )}
+              </div>
             </div>
 
-            {/* Confirm Password Field */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Confirm Password
+            {/* Terms Agreement */}
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="terms"
+                className="w-4 h-4 rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-600 focus:ring-offset-gray-900 focus:ring-2 focus:ring-offset-2"
+                required
+              />
+              <label htmlFor="terms" className="ml-2 text-sm text-gray-300">
+                I agree to the{' '}
+                <Link to="/terms" className="text-blue-400 hover:text-blue-300 hover:underline">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link to="/privacy" className="text-blue-400 hover:text-blue-300 hover:underline">
+                  Privacy Policy
+                </Link>
               </label>
-              <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={`input-field pl-10 py-3 pr-10 ${errors.confirmPassword ? 'border-red-500' : ''}`}
-                  placeholder="Password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                >
-                  {showConfirmPassword ? <FiEyeOff className="w-5 h-5" /> : <FiEye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-400">{errors.confirmPassword}</p>
-              )}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="bg-gray-500 hover:bg-gray-400 py-3 rounded-full w-full flex items-center justify-center"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center"
             >
               {loading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-2"></div>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
                   Creating Account...
                 </>
               ) : (
@@ -283,27 +314,37 @@ const Register = () => {
             </button>
           </form>
 
-          {/* Divider */}
+          {/* Divider & Login Link */}
           <div className="mt-6">
             <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-700"></div>
+              </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-dark-card text-gray-400">
+                <span className="px-2 bg-gray-800/50 text-gray-400">
                   Already have an account?
                 </span>
               </div>
             </div>
 
-            {/* Login Link */}
             <div className="mt-6">
               <Link
                 to="/login"
-                className="block hover:text-blue-400 text-md w-full text-center"
+                className="block w-full text-center bg-gray-700/50 hover:bg-gray-700 text-white font-medium py-3 px-4 rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-200"
               >
                 Sign In to Your Account
               </Link>
             </div>
           </div>
         </div>
+
+        {/* Demo Note */}
+        <p className="mt-6 text-center text-sm text-gray-400">
+          Already have an account?{' '}
+          <Link to="/login" className="text-blue-400 hover:text-blue-300 hover:underline">
+            Sign in here
+          </Link>
+        </p>
       </div>
     </div>
   );
