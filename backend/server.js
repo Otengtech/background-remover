@@ -29,6 +29,7 @@ app.use(cookieParser());
 const allowedOrigins = [
   'https://removerio.bond',
   'https://www.removerio.bond',
+  "https://backend-six-mu-76.vercel.app",
   'http://localhost:3000',
   'http://localhost:5173',
   process.env.FRONTEND_URL
