@@ -18,7 +18,7 @@ import Checkout from "./pages/Checkout";
 import Features from "./pages/Features";
 import Profile from "./pages/Profile";
 import Support from "./pages/Support";
-import AccountSetting from "./pages/AccountSetting";
+import AccountSetting from "./pages/AccountSettings";
 
 function App() {
   return (

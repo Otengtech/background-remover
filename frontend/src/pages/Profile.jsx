@@ -89,6 +89,13 @@ const ProfilePage = () => {
   const handleLogout = async () => {
     await logout();
   };
+  const maskEmail = (email) => {
+  if (!email) return '';
+  const [name, domain] = email.split('@');
+  if (name.length <= 2) return `**@${domain}`;
+  return `${name.slice(0, 2)}****@${domain}`;
+};
+
 
   if (!user) {
     return (
@@ -141,7 +148,7 @@ const ProfilePage = () => {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">{formData.name}</h2>
-                    <p className="text-gray-400">{formData.email}</p>
+                    <p className="text-gray-400">{maskEmail(formData.email)}</p>
                     <span className="inline-block mt-2 px-3 py-1 text-xs bg-blue-900/30 text-blue-300 rounded-full">
                       {stats.subscription} Plan
                     </span>
