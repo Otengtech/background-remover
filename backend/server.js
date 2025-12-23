@@ -100,27 +100,52 @@ app.use((req, res, next) => {
   next();
 });
 
-// Connect to MongoDB
+// Connect to MongoDB (UPDATED)
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+    await mongoose.connect(process.env.MONGODB_URI, {
+      // 🔑 Critical options for latest MongoDB
+      maxPoolSize: 10,
+      minPoolSize: 1,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
+      heartbeatFrequencyMS: 10000,
+      retryWrites: true,
+      retryReads: true,
     });
 
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    
-    mongoose.connection.on('error', (err) => {
-      console.error(`❌ MongoDB connection error: ${err}`);
+    console.log("✅ MongoDB Connected");
+
+    // ---- Connection events ----
+    mongoose.connection.on("connected", () => {
+      console.log("🟢 MongoDB connected");
     });
 
-    mongoose.connection.on('disconnected', () => {
-      console.log('⚠️ MongoDB disconnected');
+    mongoose.connection.on("reconnected", () => {
+      console.log("🔁 MongoDB reconnected");
     });
+
+    mongoose.connection.on("disconnected", () => {
+      console.warn("⚠️ MongoDB disconnected");
+    });
+
+    mongoose.connection.on("error", (err) => {
+      console.error("❌ MongoDB error:", err);
+    });
+
+    // ---- Keep connection alive ----
+    setInterval(async () => {
+      try {
+        await mongoose.connection.db.admin().ping();
+      } catch (err) {
+        console.error("❌ MongoDB ping failed", err);
+      }
+    }, 5 * 60 * 1000); // every 5 minutes
 
   } catch (error) {
-    console.error(`❌ MongoDB connection error: ${error.message}`);
-    process.exit(1); // Exit on critical DB connection error
+    console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1);
   }
 };
 
