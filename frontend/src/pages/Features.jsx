@@ -47,12 +47,12 @@ const Features = () => {
             </span>
           </div>
           
-          <h2 ref={titleRef} className="scroll-reveal from-right text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 ref={titleRef} className="scroll-reveal from-bottom text-3xl md:text-4xl font-bold text-white mb-4">
             Professional Background Removal,
             <span className="block text-primary-300">Simplified</span>
           </h2>
           
-          <p ref={subtitleRef} className="scroll-reveal text-gray-300 max-w-2xl mx-auto">
+          <p ref={subtitleRef} className="scroll-reveal from-bottom text-gray-300 max-w-2xl mx-auto">
             Everything you need for perfect background removal in one powerful tool.
           </p>
         </div>
@@ -80,24 +80,6 @@ const Features = () => {
               </p>
             </div>
           ))}
-        </div>
-
-        {/* Simple CTA */}
-        <div className="mt-12 text-center">
-          <div className="inline-flex flex-col sm:flex-row gap-4">
-            <button
-              ref={ctaButtonsRef[0]}
-              className="scroll-reveal from-bottom px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-all duration-300 hover:scale-105"
-            >
-              Try Free Now
-            </button>
-            <button
-              ref={ctaButtonsRef[1]}
-              className="scroll-reveal px-6 py-3 border border-gray-700 hover:border-gray-600 text-white font-medium rounded-lg transition-all duration-300"
-            >
-              See Pricing
-            </button>
-          </div>
         </div>
       </div>
     </section>

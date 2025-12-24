@@ -14,6 +14,7 @@ import {
   FiInfo
 } from 'react-icons/fi';
 import { RiDashboardLine } from 'react-icons/ri';
+import { FaRegAddressBook } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 
 const Navbar = () => {
@@ -131,14 +132,6 @@ const Navbar = () => {
                         <RiDashboardLine className="w-4 h-4" />
                         <span>BG Remover</span>
                       </Link>
-                      <Link
-                        to="/profile"
-                        onClick={() => setShowDropdown(false)}
-                        className="flex items-center space-x-2 px-4 py-2 hover:bg-gray-800 transition-colors duration-200"
-                      >
-                        <FiUser className="w-4 h-4" />
-                        <span>Profile</span>
-                      </Link>
                       <button
                         onClick={handleLogout}
                         className="flex items-center space-x-2 w-full px-4 py-2 hover:bg-gray-800 transition-colors duration-200 text-red-400"
@@ -248,11 +241,19 @@ const Navbar = () => {
                 <span>Pricing</span>
               </Link>
               <Link
-                to="/about"
+                to="/support"
                 onClick={handleNavLinkClick}
                 className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200"
               >
                 <FiInfo className="w-5 h-5" />
+                <span>Support</span>
+              </Link>
+              <Link
+                to="/about"
+                onClick={handleNavLinkClick}
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200"
+              >
+                <FaRegAddressBook className="w-5 h-5" />
                 <span>About</span>
               </Link>
             </div>
