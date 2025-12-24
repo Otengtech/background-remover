@@ -139,47 +139,84 @@ userSchema.methods.getPlanRemainingDays = function() {
 
 // Check if user can process image based on plan limits
 userSchema.methods.canProcessImage = function() {
-  const now = new Date();
-  
   // Check if plan is active for paid plans
   if (this.plan !== 'free' && !this.isPlanActive()) {
     return { 
       canProcess: false, 
-      reason: 'Plan expired. Please renew your subscription.' 
+      reason: 'Plan expired. Please renew your subscription.',
+      limit: 0,
+      remaining: 0
     };
   }
   
   // Check monthly limits
   const planLimits = {
-    free: 10,
-    basic: 100,
-    pro: Infinity
+    free: 50,     // 50 images/month
+    basic: 500,   // 500 images/month
+    pro: 5000     // 5000 images/month (effectively unlimited)
   };
   
   const limit = planLimits[this.plan];
   
+  // For pro plan with "unlimited" (5000), always allow
+  if (this.plan === 'pro') {
+    return { 
+      canProcess: true, 
+      reason: '',
+      limit: limit,
+      remaining: limit - this.monthlyImagesUsed
+    };
+  }
+  
   if (this.monthlyImagesUsed >= limit) {
     return { 
       canProcess: false, 
-      reason: `Monthly limit reached (${limit} images). Upgrade plan for more.` 
+      reason: `Monthly limit reached (${limit} images). Upgrade plan for more.`,
+      limit: limit,
+      remaining: 0
     };
   }
   
   return { 
     canProcess: true, 
-    remaining: limit - this.monthlyImagesUsed,
-    limit: limit
+    reason: '',
+    limit: limit,
+    remaining: limit - this.monthlyImagesUsed
   };
 };
 
-// Get allowed resolution based on plan
-userSchema.methods.getAllowedResolution = function() {
+// Get plan-based resolution settings
+userSchema.methods.getPlanResolutionSettings = function() {
   const resolutions = {
-    free: { width: 1280, height: 720, quality: 80, label: 'SD (720p)' },
-    basic: { width: 1920, height: 1080, quality: 90, label: 'HD (1080p)' },
-    pro: { width: 3840, height: 2160, quality: 100, label: '4K Ultra HD' }
+    free: { 
+      width: 1280, 
+      height: 720, 
+      quality: 80, 
+      label: 'SD (720p max)',
+      maxFileSize: 10 * 1024 * 1024 // 10MB
+    },
+    basic: { 
+      width: 1920, 
+      height: 1080, 
+      quality: 90, 
+      label: 'HD (1080p max)',
+      maxFileSize: 20 * 1024 * 1024 // 20MB
+    },
+    pro: { 
+      width: 3840, 
+      height: 2160, 
+      quality: 100, 
+      label: '4K Ultra HD',
+      maxFileSize: 50 * 1024 * 1024 // 50MB
+    }
   };
-  return resolutions[this.plan];
+  return resolutions[this.plan] || resolutions.free;
+};
+
+// Get plan resolution label (simple version)
+userSchema.methods.getPlanResolutionLabel = function() {
+  const resolutionSettings = this.getPlanResolutionSettings();
+  return resolutionSettings.label;
 };
 
 // Increment processed images
@@ -192,6 +229,21 @@ userSchema.methods.incrementProcessedImages = async function() {
 // Add payment to history
 userSchema.methods.addPayment = async function(paymentData) {
   this.paymentHistory.unshift(paymentData);
+  await this.save();
+};
+
+// Update plan
+userSchema.methods.updatePlan = async function(plan, expiryDate) {
+  this.plan = plan;
+  this.planExpiry = expiryDate;
+  await this.save();
+};
+
+// Reset monthly usage (admin function)
+userSchema.methods.resetMonthlyUsage = async function() {
+  this.monthlyImagesUsed = 0;
+  this.monthlyResetDate = new Date();
+  this.monthlyResetDate.setMonth(this.monthlyResetDate.getMonth() + 1);
   await this.save();
 };
 

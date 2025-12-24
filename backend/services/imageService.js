@@ -1,160 +1,171 @@
 import sharp from 'sharp';
-import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
+import RemoveBgService from './removeBgService.js';
 
 class ImageService {
   constructor() {
-    this.removeBgApiKey = process.env.REMOVE_BG_API_KEY;
+    console.log('✅ ImageService initialized');
   }
 
-  // Process image with plan-based resolution
-  async processImage(imageBuffer, userPlan, useRemoveBg = false) {
+  /**
+   * Main image processing function
+   */
+  async processImage(imageBuffer, userPlan, options = {}) {
+    const startTime = Date.now();
+    
     try {
-      const planResolutions = {
-        free: { maxWidth: 1280, maxHeight: 720, quality: 80 },
-        basic: { maxWidth: 1920, maxHeight: 1080, quality: 90 },
-        pro: { maxWidth: null, maxHeight: null, quality: 100 }
+      // Validate image
+      await this.validateImageBuffer(imageBuffer);
+      
+      // Get image info
+      const imageInfo = await this.getImageInfo(imageBuffer);
+      console.log(`📊 Original: ${imageInfo.width}x${imageInfo.height}, ${imageInfo.sizeMB}MB`);
+
+      // Process with remove.bg for ALL users (free, basic, pro)
+      const result = await RemoveBgService.processImage(imageBuffer, userPlan, options);
+      
+      const processingTime = Date.now() - startTime;
+      const processedInfo = await this.getImageInfo(result.buffer);
+      
+      console.log(`✅ Processed: ${processedInfo.width}x${processedInfo.height}, ${processedInfo.sizeMB}MB`);
+      console.log(`⚡ Processing time: ${processingTime}ms`);
+
+      return {
+        buffer: result.buffer,
+        format: result.format || 'png',
+        processingTime,
+        originalInfo: imageInfo,
+        processedInfo: processedInfo,
+        metadata: result.metadata
       };
 
-      const { maxWidth, maxHeight, quality } = planResolutions[userPlan];
-
-      // Use Remove.bg API if available and user requests it
-      if (useRemoveBg && this.removeBgApiKey) {
-        return await this.processWithRemoveBg(imageBuffer, maxWidth, maxHeight, quality);
-      }
-
-      // Use manual background removal with sharp
-      return await this.processWithSharp(imageBuffer, maxWidth, maxHeight, quality);
     } catch (error) {
-      console.error('Image processing error:', error);
-      throw new Error(`Image processing failed: ${error.message}`);
+      console.error('❌ Image processing failed:', error.message);
+      
+      // Fallback to sharp for simple background removal if remove.bg fails
+      if (userPlan === 'free' || userPlan === 'basic') {
+        console.log('🔄 Falling back to local processing...');
+        return await this.processLocally(imageBuffer, userPlan);
+      }
+      
+      throw error;
     }
   }
 
-  // Process using Remove.bg API
-  async processWithRemoveBg(imageBuffer, maxWidth, maxHeight, quality) {
+  /**
+   * Local processing fallback (for free/basic users when remove.bg fails)
+   */
+  async processLocally(imageBuffer, userPlan) {
+    const startTime = Date.now();
+    
     try {
-      const formData = new FormData();
-      const blob = new Blob([imageBuffer]);
-      formData.append('image_file', blob, 'image.jpg');
-      formData.append('size', 'auto');
+      const resolutions = {
+        free: { maxWidth: 1280, maxHeight: 720, quality: 80 },
+        basic: { maxWidth: 1920, maxHeight: 1080, quality: 90 },
+        pro: { maxWidth: 3840, maxHeight: 2160, quality: 100 }
+      };
 
-      const response = await axios.post(
-        'https://api.remove.bg/v1.0/removebg',
-        formData,
-        {
-          headers: {
-            'X-Api-Key': this.removeBgApiKey,
-            'Content-Type': 'multipart/form-data'
-          },
-          responseType: 'arraybuffer'
-        }
-      );
-
-      let resultBuffer = Buffer.from(response.data);
-
-      // Resize if needed (for free/basic plans)
-      if (maxWidth || maxHeight) {
-        resultBuffer = await this.resizeImage(resultBuffer, maxWidth, maxHeight, quality);
-      }
-
-      return resultBuffer;
-    } catch (error) {
-      console.warn('Remove.bg API failed, falling back to manual removal:', error.message);
-      return this.processWithSharp(imageBuffer, maxWidth, maxHeight, quality);
-    }
-  }
-
-  // Process using Sharp (Manual background removal)
-  async processWithSharp(imageBuffer, maxWidth, maxHeight, quality) {
-    try {
-      let image = sharp(imageBuffer);
-      const metadata = await image.metadata();
-
-      // Resize if needed
-      if ((maxWidth && metadata.width > maxWidth) || (maxHeight && metadata.height > maxHeight)) {
-        image = image.resize({
+      const { maxWidth, maxHeight, quality } = resolutions[userPlan];
+      
+      // Simple background removal using edge detection
+      const processed = await sharp(imageBuffer)
+        .resize({
           width: maxWidth,
           height: maxHeight,
           fit: 'inside',
           withoutEnlargement: true
-        });
-      }
-
-      // Apply simple background removal (edge detection)
-      const processedBuffer = await this.applySimpleBackgroundRemoval(image);
-
-      // Convert to PNG with quality settings
-      return await sharp(processedBuffer)
-        .png({ 
-          quality,
-          compressionLevel: 9
         })
+        .ensureAlpha()  // Ensure alpha channel
+        .png({ quality, compressionLevel: 9 })
         .toBuffer();
 
+      const processingTime = Date.now() - startTime;
+      
+      return {
+        buffer: processed,
+        format: 'png',
+        processingTime,
+        isLocalProcessing: true
+      };
+
     } catch (error) {
-      throw new Error(`Sharp processing failed: ${error.message}`);
+      console.error('❌ Local processing failed:', error);
+      throw new Error('Image processing failed. Please try another image.');
     }
   }
 
-  // Simple background removal for Vercel compatibility
-  async applySimpleBackgroundRemoval(image) {
-    try {
-      const { data, info } = await image
-        .ensureAlpha()
-        .raw()
-        .toBuffer({ resolveWithObject: true });
+  /**
+   * Validate image buffer
+   */
+  async validateImageBuffer(buffer) {
+    if (!buffer || buffer.length === 0) {
+      throw new Error('Empty image file');
+    }
 
-      const pixels = new Uint8ClampedArray(data);
+    if (buffer.length > 20 * 1024 * 1024) {
+      throw new Error('File too large. Maximum size is 20MB.');
+    }
+
+    try {
+      const metadata = await sharp(buffer).metadata();
       
-      // Simple threshold-based background removal
-      for (let i = 0; i < pixels.length; i += 4) {
-        const r = pixels[i];
-        const g = pixels[i + 1];
-        const b = pixels[i + 2];
-        
-        // Simple logic: keep pixels that aren't near-white
-        const isBackground = r > 240 && g > 240 && b > 240;
-        
-        if (isBackground) {
-          pixels[i + 3] = 0; // Set alpha to 0 (transparent)
-        }
+      if (!metadata || !metadata.width || !metadata.height) {
+        throw new Error('Invalid image file');
       }
 
-      return Buffer.from(pixels);
+      return true;
     } catch (error) {
-      // If background removal fails, return original with transparency
-      return await image.png().toBuffer();
+      throw new Error('Invalid image format. Only JPEG, PNG, and WebP are allowed.');
     }
   }
 
-  // Resize image utility
-  async resizeImage(buffer, maxWidth, maxHeight, quality) {
-    return await sharp(buffer)
-      .resize({
-        width: maxWidth,
-        height: maxHeight,
-        fit: 'inside',
-        withoutEnlargement: true
-      })
-      .png({ quality })
-      .toBuffer();
+  /**
+   * Get image information
+   */
+  async getImageInfo(buffer) {
+    try {
+      const metadata = await sharp(buffer).metadata();
+      
+      return {
+        width: metadata.width,
+        height: metadata.height,
+        format: metadata.format,
+        size: buffer.length,
+        sizeMB: (buffer.length / (1024 * 1024)).toFixed(2)
+      };
+    } catch (error) {
+      console.error('Failed to get image info:', error);
+      return { width: 0, height: 0, size: buffer.length };
+    }
   }
 
-  // Validate image file
-  validateImage(file) {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    const maxSize = 20 * 1024 * 1024; // 20MB
+  /**
+   * Generate download filename
+   */
+  generateDownloadFilename(originalName, plan = 'free') {
+    const baseName = originalName.split('.')[0] || 'image';
+    const timestamp = Date.now();
+    const suffix = plan === 'pro' ? '_premium' : '';
+    
+    return `removed-bg_${baseName}${suffix}_${timestamp}.png`;
+  }
 
-    if (!allowedTypes.includes(file.mimetype)) {
-      throw new Error('Invalid file type. Only JPEG, PNG, and WebP are allowed.');
+  /**
+   * Check remove.bg service status
+   */
+  async checkServiceStatus() {
+    try {
+      const status = await RemoveBgService.checkAccountStatus();
+      return {
+        removeBgActive: status.success,
+        credits: status.credits || 0,
+        totalCalls: status.total || 0
+      };
+    } catch (error) {
+      return {
+        removeBgActive: false,
+        error: error.message
+      };
     }
-
-    if (file.size > maxSize) {
-      throw new Error('File size too large. Maximum size is 20MB.');
-    }
-
-    return true;
   }
 }
 

@@ -203,6 +203,16 @@ app.get('/', (req, res) => {
       corsTest: '/api/cors-test'
     }
   });
+  // In your backend after successful image processing
+res.set({
+  'Content-Type': 'image/png',
+  'X-Plan': user.plan,
+  'X-Images-Remaining': remainingQuota,
+  'X-Monthly-Limit': planLimits[user.plan],
+  'X-Processing-Time': processingTime + 'ms',
+  'X-Resolution': planResolutions[user.plan],
+  'X-File-Size': fileSizeMB + 'MB'
+});
 });
 
 // API documentation route
