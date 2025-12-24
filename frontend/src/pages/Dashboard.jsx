@@ -277,54 +277,7 @@ const ImageUpload = () => {
                 </div>
               </div>
             </div>
-
-            {/* Features Card */}
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-6 flex items-center">
-                <FiAward className="mr-2 text-purple-400" />
-                Features by Plan
-              </h2>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between py-2 border-b border-gray-700/50">
-                  <span className="text-gray-300">Max Resolution</span>
-                  <span className="font-medium text-white">
-                    {user?.plan === 'pro' ? '4K' : user?.plan === 'basic' ? '1080p' : '720p'}
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between py-2 border-b border-gray-700/50">
-                  <span className="text-gray-300">Processing Speed</span>
-                  <span className="font-medium text-white">
-                    {user?.plan === 'pro' ? 'Instant' : user?.plan === 'basic' ? 'Fast' : 'Standard'}
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between py-2 border-b border-gray-700/50">
-                  <span className="text-gray-300">AI Technology</span>
-                  <span className={`font-medium ${user?.plan === 'pro' ? 'text-green-400' : 'text-gray-400'}`}>
-                    {user?.plan === 'pro' ? 'Enabled' : 'Basic'}
-                  </span>
-                </div>
-                
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-gray-300">Monthly Images</span>
-                  <span className="font-medium text-white">
-                    {user?.plan === 'pro' ? 'Unlimited' : user?.plan === 'basic' ? '100' : '10'}
-                  </span>
-                </div>
-              </div>
-              
-              {user?.plan !== 'pro' && (
-                <button
-                  onClick={() => window.location.href = '/pricing'}
-                  className="w-full mt-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all"
-                >
-                  Upgrade to Pro
-                </button>
-              )}
-            </div>
-
+            
             {/* Security Card */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-4">
@@ -527,30 +480,6 @@ const ImageUpload = () => {
                   </button>
                 </div>
               )}
-            </div>
-
-            {/* Quick Stats Bar */}
-            <div className="mt-6 grid grid-cols-3 gap-4">
-              <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-white">
-                  {user?.plan === 'pro' ? '∞' : user?.plan === 'basic' ? '100' : '10'}
-                </div>
-                <div className="text-xs text-gray-400 mt-1">Monthly Images</div>
-              </div>
-              
-              <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-white">
-                  {user?.plan === 'pro' ? '<1s' : user?.plan === 'basic' ? '2-5s' : '5-10s'}
-                </div>
-                <div className="text-xs text-gray-400 mt-1">Speed</div>
-              </div>
-              
-              <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-white">
-                  {user?.plan === 'pro' ? '4K' : user?.plan === 'basic' ? '1080p' : '720p'}
-                </div>
-                <div className="text-xs text-gray-400 mt-1">Max Quality</div>
-              </div>
             </div>
           </div>
         </div>

@@ -12,10 +12,12 @@ import {
   FiUpload,
   FiShield,
   FiBarChart2,
-  FiCloud,
+  FiDownload,
+  FiCpu,
+  FiMessageSquare,
+  FiUploadCloud,
   FiUsers,
   FiClock,
-  FiDownload,
 } from "react-icons/fi";
 
 const Home = () => {
@@ -34,19 +36,31 @@ const Home = () => {
 
   const steps = [
     {
-      icon: <FiCloud />,
-      title: "Upload Image",
-      desc: "Drag & drop any image format",
+      icon: <FiUploadCloud />,
+      title: "Upload Your Image",
+      description: "Drag & drop or select any image format",
+      details: "Supports JPG, PNG, WebP, SVG, and more",
+      color: "from-blue-500 to-cyan-500",
+      action: "Select File",
+      time: "Instant",
     },
     {
-      icon: <FiClock />,
-      title: "AI Processing",
-      desc: "Instant background removal",
+      icon: <FiCpu />,
+      title: "AI Magic Processing",
+      description: "Advanced AI removes backgrounds perfectly",
+      details: "Uses neural networks for precise edge detection",
+      color: "from-purple-500 to-pink-500",
+      action: "Process Now",
+      time: "2-5 seconds",
     },
     {
       icon: <FiDownload />,
-      title: "Download",
-      desc: "Get transparent PNG instantly",
+      title: "Download & Share",
+      description: "Get high-quality transparent PNG",
+      details: "Also available as JPG with custom background",
+      color: "from-orange-500 to-red-500",
+      action: "Download",
+      time: "Instant",
     },
   ];
 
@@ -166,10 +180,7 @@ const Home = () => {
             ref={headingRef}
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              About{" "}
-              <span className=" text-[#7c3aed]">
-                Removeio
-              </span>
+              About <span className=" text-[#7c3aed]">Removeio</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Making background removal simple, fast, and accessible for
@@ -178,15 +189,12 @@ const Home = () => {
           </div>
 
           {/* Our Story */}
-          <div
-            className="scroll-reveal from-bottom p-8 mb-12"
-            ref={subtitleRef}
-          >
+          <div className="scroll-reveal from-bottom mb-8" ref={subtitleRef}>
             <h2 className="text-2xl font-bold mb-6 flex items-center">
               <FiUsers className="mr-3 text-blue-400" />
               Our Story
             </h2>
-            <div className="space-y-4 text-gray-300">
+            <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 items-center justify-center leading-[2rem] gap-4 text-md text-gray-300">
               <p>
                 Removeio was born from a simple observation: removing
                 backgrounds from images shouldn't require expensive software or
@@ -219,20 +227,43 @@ const Home = () => {
               <div
                 key={index}
                 ref={stepsRef(index)}
-                className="scroll-reveal from-bottom card hover:border-primary-500/50 transition-all duration-500"
+                className="scroll-reveal from-bottom card hover:border-primary-500/50 transition-all duration-500 group"
                 style={{
                   "--stagger-index": index,
                   transitionDelay: `${index * 0.15}s`,
                 }}
               >
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-16 h-16 rounded-full bg-primary-500/10 flex items-center justify-center mb-6">
-                    <div className="text-primary-500 text-2xl">{step.icon}</div>
+                <div className="flex flex-col items-center text-lleft p-6">
+                  {/* Step Number */}
+                  <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-sm font-bold text-gray-300">
+                    {index + 1}
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">
+
+                  {/* Icon with gradient background */}
+                  <div
+                    className={`w-20 h-20 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    <div className="text-white text-3xl">{step.icon}</div>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-2xl font-bold text-white mb-3">
                     {step.title}
                   </h3>
-                  <p className="text-gray-400">{step.desc}</p>
+
+                  {/* Description */}
+                  <p className="text-gray-300 mb-2">{step.description}</p>
+
+                  {/* Details */}
+                  <p className="text-sm text-gray-400 mb-4">{step.details}</p>
+
+                  {/* Time indicator */}
+                  <div
+                    className={`flex items-center ${step.color} justify-center text-md mb-4`}
+                  >
+                    <FiClock className="mr-2" />
+                    {step.time}
+                  </div>
                 </div>
               </div>
             ))}
@@ -268,7 +299,8 @@ const Feature = ({ icon, text, index }) => {
 const FeaturesSection = () => {
   const sectionRef = useScrollReveal();
   const featureCardsRef = useScrollRevealMap(3);
-
+  const { isAuthenticated } = useAuth();
+  const contactRef = useScrollReveal();
   const features = [
     {
       icon: <FiZap />,
@@ -310,7 +342,7 @@ const FeaturesSection = () => {
             >
               <div className="flex flex-col items-center text-center">
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 transition-colors">
-                  <div className="text-primary-500 text-2xl group-hover:scale-110 transition-transform">
+                  <div className="text-purple-500 text-4xl group-hover:scale-110 transition-transform">
                     {feature.icon}
                   </div>
                 </div>
@@ -331,6 +363,43 @@ const FeaturesSection = () => {
           <StatCard number="24/7" label="Uptime" delay="0.3s" />
         </div>
       </div>
+      {/* Contact */}
+      <section
+        ref={contactRef}
+        className="scroll-reveal from-bottom mt-10 bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-700/30 rounded-2xl p-8 text-center"
+      >
+        <FiMessageSquare className="text-4xl text-blue-400 mx-auto mb-4" />
+        <h2 className="text-2xl font-bold mb-4">Start processing images</h2>
+        {!isAuthenticated ? (
+          <div>
+            <p className="text-gray-300 mb-6">
+              Login into your account to start processing images.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link
+                to="/login"
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg"
+              >
+                Login to account
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <p className="text-gray-300 mb-6">
+              Move to bg remover page to start processing images.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link
+                to="/dashboard"
+                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg"
+              >
+                To bg remover
+              </Link>
+            </div>
+          </div>
+        )}
+      </section>
     </section>
   );
 };
