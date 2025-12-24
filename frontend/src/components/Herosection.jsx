@@ -1,7 +1,10 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useScrollReveal, useScrollRevealMap } from '../hooks/useIntersectionObserver';
-import heroImage from "../assets/heroImage.avif"
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import {
+  useScrollReveal,
+  useScrollRevealMap,
+} from "../hooks/useIntersectionObserver";
+import heroImage from "../assets/heroImage.avif";
 import {
   FiZap,
   FiCheck,
@@ -10,16 +13,18 @@ import {
   FiShield,
   FiBarChart2,
   FiCloud,
+  FiUsers,
   FiClock,
-  FiDownload
-} from 'react-icons/fi';
+  FiDownload,
+} from "react-icons/fi";
 
 const Home = () => {
   const { isAuthenticated } = useAuth();
-  
+
   // Create refs for animations
   const heroTagRef = useScrollReveal();
   const titleRef = useScrollReveal();
+  const headingRef = useScrollReveal();
   const subtitleRef = useScrollReveal();
   const ctaRef = useScrollReveal();
   const imageRef = useScrollReveal();
@@ -28,9 +33,21 @@ const Home = () => {
   const stepsRef = useScrollRevealMap(3);
 
   const steps = [
-    { icon: <FiCloud />, title: "Upload Image", desc: "Drag & drop any image format" },
-    { icon: <FiClock />, title: "AI Processing", desc: "Instant background removal" },
-    { icon: <FiDownload />, title: "Download", desc: "Get transparent PNG instantly" },
+    {
+      icon: <FiCloud />,
+      title: "Upload Image",
+      desc: "Drag & drop any image format",
+    },
+    {
+      icon: <FiClock />,
+      title: "AI Processing",
+      desc: "Instant background removal",
+    },
+    {
+      icon: <FiDownload />,
+      title: "Download",
+      desc: "Get transparent PNG instantly",
+    },
   ];
 
   return (
@@ -42,7 +59,7 @@ const Home = () => {
             {/* Left Content */}
             <div className="space-y-8">
               {/* Hero Tag */}
-              <div 
+              <div
                 ref={heroTagRef}
                 className="scroll-reveal from-bottom inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-500/10 border border-primary-500/20"
               >
@@ -53,43 +70,45 @@ const Home = () => {
               </div>
 
               {/* Main Title */}
-              <h1 
+              <h1
                 ref={titleRef}
                 className="scroll-reveal from-left text-5xl md:text-6xl font-bold text-white"
               >
                 Remove Backgrounds <br />
-                <span className="text-[#7c3aed]">
-                  In Seconds
-                </span>
+                <span className="text-[#7c3aed]">In Seconds</span>
               </h1>
 
               {/* Subtitle */}
-              <p 
+              <p
                 className="text-gray-300 text-xl max-w-xl"
                 style={{ transitionDelay: "0.2s" }}
               >
-                Upload any image and get professional-grade transparent backgrounds instantly.
+                Upload any image and get professional-grade transparent
+                backgrounds instantly.
               </p>
 
               {/* CTA Buttons */}
-              <div ref={ctaRef} 
+              <div
+                ref={ctaRef}
                 className="scroll-reveal from-left flex gap-4 flex-wrap"
                 style={{ transitionDelay: "0.3s" }}
               >
                 {isAuthenticated ? (
                   <div className="flex items-center justify-center space-x-3">
-                  <Link
-                    to="/dashboard"
-                    className="btn-primary px-8 py-4 flex items-center gap-2"
-                  >
-                    BG Remover<FiArrowRight />
-                  </Link>
-                  <Link
-                    to="/support"
-                    className="btn-primary px-8 py-4 flex items-center gap-2"
-                  >
-                    Support<FiArrowRight />
-                  </Link>
+                    <Link
+                      to="/dashboard"
+                      className="btn-primary px-8 py-4 flex items-center gap-2"
+                    >
+                      BG Remover
+                      <FiArrowRight />
+                    </Link>
+                    <Link
+                      to="/support"
+                      className="btn-primary px-8 py-4 flex items-center gap-2"
+                    >
+                      Support
+                      <FiArrowRight />
+                    </Link>
                   </div>
                 ) : (
                   <>
@@ -99,10 +118,7 @@ const Home = () => {
                     >
                       Start Free <FiArrowRight />
                     </Link>
-                    <Link
-                      to="/login"
-                      className="btn-secondary px-8 py-4"
-                    >
+                    <Link to="/login" className="btn-secondary px-8 py-4">
                       Sign In
                     </Link>
                   </>
@@ -110,26 +126,31 @@ const Home = () => {
               </div>
 
               {/* Features Grid */}
-              <div 
+              <div
                 ref={featuresRef}
                 className="scroll-reveal from-bottom stagger-container"
                 style={{ transitionDelay: "0.4s" }}
               >
                 <div className="grid grid-cols-2 gap-4">
-                  <Feature icon={<FiCheck />} text="Secured Payment" index={0} />
-                  <Feature icon={<FiUpload />} text="Unlimited Uploads" index={1} />
+                  <Feature
+                    icon={<FiCheck />}
+                    text="Secured Payment"
+                    index={0}
+                  />
+                  <Feature
+                    icon={<FiUpload />}
+                    text="Unlimited Uploads"
+                    index={1}
+                  />
                 </div>
               </div>
             </div>
 
             {/* Right Image */}
-            <div 
-              ref={imageRef}
-              className="scroll-reveal from-right"
-            >
-              <img 
-                src={heroImage} 
-                alt="AI Background Removal Demo" 
+            <div ref={imageRef} className="scroll-reveal from-right">
+              <img
+                src={heroImage}
+                alt="AI Background Removal Demo"
                 className="rounded-full shadow-2xl shadow-primary-500/20 hover:scale-[1.02] transition-transform duration-500"
               />
             </div>
@@ -137,34 +158,80 @@ const Home = () => {
         </div>
       </section>
 
+      <div className=" text-white md:py-28 py-12 px-4">
+        <div className="container mx-auto max-w-5xl">
+          {/* Hero Section */}
+          <div
+            className="text-center scroll-reveal from-bottom mb-16"
+            ref={headingRef}
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              About{" "}
+              <span className=" text-[#7c3aed]">
+                Removeio
+              </span>
+            </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Making background removal simple, fast, and accessible for
+              everyone
+            </p>
+          </div>
+
+          {/* Our Story */}
+          <div
+            className="scroll-reveal from-bottom p-8 mb-12"
+            ref={subtitleRef}
+          >
+            <h2 className="text-2xl font-bold mb-6 flex items-center">
+              <FiUsers className="mr-3 text-blue-400" />
+              Our Story
+            </h2>
+            <div className="space-y-4 text-gray-300">
+              <p>
+                Removeio was born from a simple observation: removing
+                backgrounds from images shouldn't require expensive software or
+                complex skills. We saw individuals and businesses struggling
+                with clunky tools and decided to build something better.
+              </p>
+              <p>
+                Founded in 2025, our mission is to democratize professional
+                image editing by providing AI-powered tools that are both
+                powerful and easy to use. What started as a small project has
+                grown into a platform trusted by thousands of users worldwide.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* How It Works Section */}
       <section className="py-20 px-6 bg-dark-card/30">
         <div className="container mx-auto max-w-6xl">
-          <h2 
+          <h2
             ref={sectionTitleRef}
             className="scroll-reveal from-bottom text-center text-4xl md:text-5xl font-bold text-white mb-16"
           >
             How It Works
           </h2>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, index) => (
               <div
                 key={index}
                 ref={stepsRef(index)}
                 className="scroll-reveal from-bottom card hover:border-primary-500/50 transition-all duration-500"
-                style={{ 
+                style={{
                   "--stagger-index": index,
-                  transitionDelay: `${index * 0.15}s`
+                  transitionDelay: `${index * 0.15}s`,
                 }}
               >
                 <div className="flex flex-col items-center text-center">
                   <div className="w-16 h-16 rounded-full bg-primary-500/10 flex items-center justify-center mb-6">
-                    <div className="text-primary-500 text-2xl">
-                      {step.icon}
-                    </div>
+                    <div className="text-primary-500 text-2xl">{step.icon}</div>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-4">{step.title}</h3>
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    {step.title}
+                  </h3>
                   <p className="text-gray-400">{step.desc}</p>
                 </div>
               </div>
@@ -182,9 +249,9 @@ const Home = () => {
 // Feature Component with Animation
 const Feature = ({ icon, text, index }) => {
   const featureRef = useScrollReveal();
-  
+
   return (
-    <div 
+    <div
       ref={featureRef}
       className="scroll-reveal from-bottom flex items-center gap-3 text-gray-300 hover:text-white transition-colors duration-300"
       style={{ "--stagger-index": index }}
@@ -201,44 +268,44 @@ const Feature = ({ icon, text, index }) => {
 const FeaturesSection = () => {
   const sectionRef = useScrollReveal();
   const featureCardsRef = useScrollRevealMap(3);
-  
+
   const features = [
     {
       icon: <FiZap />,
       title: "Lightning Fast",
-      desc: "Process images in under 2 seconds with our optimized AI"
+      desc: "Process images in under 2 seconds with our optimized AI",
     },
     {
       icon: <FiShield />,
       title: "Privacy First",
-      desc: "Your images are automatically deleted after processing"
+      desc: "Your images are automatically deleted after processing",
     },
     {
       icon: <FiBarChart2 />,
       title: "High Quality",
-      desc: "4K resolution support with perfect edge detection"
-    }
+      desc: "4K resolution support with perfect edge detection",
+    },
   ];
 
   return (
     <section className="py-20 px-6">
       <div className="container mx-auto max-w-6xl">
-        <h2 
+        <h2
           ref={sectionRef}
           className="scroll-reveal from-bottom text-center text-4xl md:text-5xl font-bold text-white mb-16"
         >
           Why Choose Removeio
         </h2>
-        
+
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
             <div
               key={index}
               ref={featureCardsRef(index)}
               className="scroll-reveal from-bottom card hover:scale-[1.02] hover:border-primary-500/50 transition-all duration-500 group"
-              style={{ 
+              style={{
                 "--stagger-index": index,
-                transitionDelay: `${index * 0.1}s`
+                transitionDelay: `${index * 0.1}s`,
               }}
             >
               <div className="flex flex-col items-center text-center">
@@ -247,13 +314,15 @@ const FeaturesSection = () => {
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">{feature.title}</h3>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  {feature.title}
+                </h3>
                 <p className="text-gray-400">{feature.desc}</p>
               </div>
             </div>
           ))}
         </div>
-        
+
         {/* Stats Section */}
         <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
           <StatCard number="50K+" label="Images Processed" delay="0s" />
@@ -269,14 +338,16 @@ const FeaturesSection = () => {
 // Stat Card Component
 const StatCard = ({ number, label, delay }) => {
   const statRef = useScrollReveal();
-  
+
   return (
-    <div 
+    <div
       ref={statRef}
       className="scroll-reveal from-bottom text-center p-6 bg-dark-card/50 rounded-xl border border-dark-border hover:border-primary-500/30 transition-colors duration-300"
       style={{ transitionDelay: delay }}
     >
-      <div className="text-3xl md:text-4xl font-bold text-primary-500 mb-2">{number}</div>
+      <div className="text-3xl md:text-4xl font-bold text-primary-500 mb-2">
+        {number}
+      </div>
       <div className="text-gray-400">{label}</div>
     </div>
   );
