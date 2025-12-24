@@ -199,18 +199,6 @@ const Login = () => {
             )}
           </div>
 
-          {/* Remember Me */}
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="remember"
-              className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
-            />
-            <label htmlFor="remember" className="ml-2 text-sm text-gray-300">
-              Remember me for 30 days
-            </label>
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"

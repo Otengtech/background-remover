@@ -1,139 +1,124 @@
-import axios from 'axios';
-import FormData from 'form-data';
+import axios from "axios";
+import FormData from "form-data";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 class RemoveBgService {
   constructor() {
     this.apiKey = process.env.REMOVE_BG_API_KEY;
-    this.baseUrl = 'https://api.remove.bg/v1.0/removebg';
-    
+    this.baseUrl = "https://api.remove.bg/v1.0/removebg";
+
     if (!this.apiKey) {
-      console.error('❌ REMOVE_BG_API_KEY is not configured');
+      console.error("❌ REMOVE_BG_API_KEY is not configured");
     }
   }
 
   /**
-   * Get plan-based parameters for remove.bg API
+   * Get plan-based configuration (STRICTLY VALID)
    */
-  getPlanConfig(userPlan, options = {}) {
+  getPlanConfig(userPlan = "free", options = {}) {
     const configs = {
       free: {
-        size: 'preview',           // 0.25MP (625x625 max)
-        quality: 'regular',
-        channels: 'rgba',
-        format: 'png',
-        type: 'auto',
-        bg_color: options.bg_color || 'transparent',
-        bg_image_url: options.bg_image_url || null
+        size: "auto", // ONLY allowed for free
       },
+
       basic: {
-        size: 'regular',           // 10MP (4000x4000 max)
-        quality: 'hd',
-        channels: 'rgba',
-        format: 'png',
-        type: 'auto',
-        bg_color: options.bg_color || 'transparent',
-        bg_image_url: options.bg_image_url || null,
+        size: "regular",
+        format: "png",
+        bg_color: options.bg_color || "transparent",
         crop: options.crop || false,
-        scale: options.scale || 'original',
-        position: options.position || 'original'
       },
+
       pro: {
-        size: 'hd',                // 25MP (6000x6000 max)
-        quality: 'hd',
-        channels: 'rgba',
-        format: options.format || 'png',
-        type: 'auto',
-        bg_color: options.bg_color || 'transparent',
-        bg_image_url: options.bg_image_url || null,
+        size: "hd",
+        format: options.format || "png",
+        bg_color: options.bg_color || "transparent",
         crop: options.crop || false,
-        crop_margin: options.crop_margin || '0px',
-        scale: options.scale || 'original',
-        position: options.position || 'original',
+        crop_margin: options.crop_margin || "0px",
+        scale: options.scale || "original",
+        position: options.position || "original",
         add_shadow: options.add_shadow || false,
-        semitransparency: true
-      }
+        semitransparency: true,
+      },
     };
-    
+
     return configs[userPlan] || configs.free;
   }
 
   /**
-   * Process image using remove.bg API
+   * Remove background using remove.bg
    */
-  async processImage(imageBuffer, userPlan = 'free', options = {}) {
+  async processImage(imageBuffer, userPlan = "free", options = {}) {
     try {
       if (!this.apiKey) {
-        throw new Error('Remove.bg API key not configured');
+        throw new Error("Remove.bg API key missing");
+      }
+
+      if (!imageBuffer || imageBuffer.length === 0) {
+        throw new Error("Invalid or empty image buffer");
       }
 
       const config = this.getPlanConfig(userPlan, options);
-      
-      console.log(`🔄 Processing with remove.bg for ${userPlan} plan, size: ${config.size}`);
+
+      const mimeType = options.mimetype || "image/jpeg";
+      const extension = mimeType.split("/")[1] || "jpg";
+
+      console.log(
+        `🔄 remove.bg → plan: ${userPlan}, size: ${config.size}, type: ${mimeType}`
+      );
 
       const formData = new FormData();
-      formData.append('image_file', imageBuffer, {
-        filename: `image_${Date.now()}.jpg`,
-        contentType: 'image/jpeg'
+
+      formData.append("image_file", imageBuffer, {
+        filename: `image_${Date.now()}.${extension}`,
+        contentType: mimeType,
       });
 
-      // Add all parameters
-      Object.keys(config).forEach(key => {
-        if (config[key] !== null && config[key] !== undefined) {
-          formData.append(key, config[key]);
+      // Append ONLY valid params
+      Object.entries(config).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value);
         }
       });
 
       const response = await axios.post(this.baseUrl, formData, {
         headers: {
           ...formData.getHeaders(),
-          'X-Api-Key': this.apiKey
+          "X-Api-Key": this.apiKey,
         },
-        responseType: 'arraybuffer',
+        responseType: "arraybuffer",
         timeout: 30000,
-        maxContentLength: 100 * 1024 * 1024
+        maxBodyLength: Infinity,
       });
-
-      // Parse response headers
-      const rateLimitInfo = {
-        remaining: response.headers['x-ratelimit-remaining'] || 'unknown',
-        reset: response.headers['x-ratelimit-reset'] || 'unknown'
-      };
 
       return {
         success: true,
         buffer: Buffer.from(response.data),
-        format: config.format,
         size: response.data.length,
-        rateLimit: rateLimitInfo,
-        metadata: config
+        format: config.format || "png",
+        rateLimit: {
+          remaining: response.headers["x-ratelimit-remaining"] || null,
+          reset: response.headers["x-ratelimit-reset"] || null,
+        },
       };
-
     } catch (error) {
-      console.error('Remove.bg API Error:', error.response?.status, error.message);
-      
-      let errorMessage = 'Failed to process image';
-      let statusCode = 500;
+      const status = error.response?.status || 500;
 
-      if (error.response) {
-        statusCode = error.response.status;
-        
-        if (statusCode === 402) {
-          errorMessage = 'Insufficient credits on remove.bg account';
-        } else if (statusCode === 429) {
-          errorMessage = 'Rate limit exceeded. Please try again later';
-        } else if (statusCode === 413) {
-          errorMessage = 'Image file too large';
-        } else if (statusCode === 422) {
-          errorMessage = 'Unprocessable image. Please try another image';
-        } else if (statusCode === 403) {
-          errorMessage = 'Invalid API key';
-        }
-      }
+      let message = "Image processing failed";
+
+      if (status === 400) message = "Invalid image or parameters";
+      if (status === 402) message = "remove.bg credits exhausted";
+      if (status === 403) message = "Invalid remove.bg API key";
+      if (status === 413) message = "Image too large";
+      if (status === 429) message = "Rate limit exceeded";
+
+      console.error("❌ remove.bg error:", status, error.message);
 
       throw {
-        message: errorMessage,
-        statusCode: statusCode,
-        originalError: error.message
+        success: false,
+        statusCode: status,
+        message,
       };
     }
   }
@@ -143,22 +128,26 @@ class RemoveBgService {
    */
   async checkAccountStatus() {
     try {
-      const response = await axios.get('https://api.remove.bg/v1.0/account', {
-        headers: {
-          'X-Api-Key': this.apiKey
+      const response = await axios.get(
+        "https://api.remove.bg/v1.0/account",
+        {
+          headers: {
+            "X-Api-Key": this.apiKey,
+          },
         }
-      });
+      );
 
       return {
         success: true,
-        credits: response.data.data?.attributes?.credits || 0,
-        total: response.data.data?.attributes?.api.free_calls || 0
+        credits:
+          response.data?.data?.attributes?.credits?.remaining ?? 0,
+        plan: response.data?.data?.attributes?.plan || "unknown",
       };
     } catch (error) {
-      console.error('Failed to check remove.bg account:', error.message);
+      console.error("❌ remove.bg account check failed:", error.message);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
   }

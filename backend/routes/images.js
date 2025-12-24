@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import imageController from '../controllers/imageController.js';
 import { protect, optionalAuth } from '../middleware/auth.js';
+import path from 'path'; // Add this import
 
 const router = express.Router();
 

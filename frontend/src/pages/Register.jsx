@@ -366,28 +366,18 @@ const Register = () => {
               </button>
             </form>
 
-            {/* Divider & Login Link */}
-            <div className="mt-8">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-700"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-gray-800/50 text-gray-400">
-                    Already have an account?
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-3">
-                <Link
-                  to="/login"
-                  className="block w-full text-center text-white font-medium transition-all duration-200"
-                >
-                  Login to account
-                </Link>
-              </div>
-            </div>
+            {/* Sign Up Link */}
+                      <div className="mt-8 text-center">
+                        <p className="text-gray-400">
+                          Already have an account?{' '}
+                          <Link
+                            to="/login"
+                            className="text-blue-400 hover:text-blue-300 font-medium hover:underline"
+                          >
+                            Login now
+                          </Link>
+                        </p>
+                      </div>
           </div>
 
           {/* Footer Note */}

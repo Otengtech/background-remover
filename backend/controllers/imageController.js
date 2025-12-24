@@ -22,9 +22,21 @@ class ImageController {
         return res.status(403).json({
           success: false,
           error: canProcess.reason,
-          code: 'QUOTA_EXCEEDED'
+          code: 'QUOTA_EXCEEDED',
+          current: canProcess.current,
+          limit: canProcess.limit,
+          remaining: canProcess.remaining
         });
       }
+
+      // Debug: Check file details
+      console.log('📊 File upload details:', {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        bufferLength: req.file.buffer?.length,
+        sizeKB: (req.file.buffer?.length / 1024).toFixed(2),
+        hasBuffer: !!req.file.buffer && req.file.buffer.length > 100
+      });
 
       // Get processing options from request
       const options = {
@@ -37,37 +49,58 @@ class ImageController {
 
       console.log(`🖼️ Processing image for ${user.email} (${user.plan} plan)`);
 
-      // Process image using remove.bg
-      const result = await ImageService.processImage(
-        req.file.buffer,
-        user.plan,
-        options
-      );
+      try {
+        // Process image using remove.bg
+        const result = await ImageService.processImage(
+          req.file.buffer,
+          user.plan,
+          options
+        );
 
-      // Increment user's image count
-      await user.incrementProcessedImages();
+        // Increment user's image count
+        await user.incrementProcessedImages();
 
-      // Generate download filename
-      const downloadFilename = ImageService.generateDownloadFilename(
-        req.file.originalname,
-        user.plan
-      );
+        // Generate download filename
+        const downloadFilename = ImageService.generateDownloadFilename(
+          req.file.originalname,
+          user.plan
+        );
 
-      // Set response headers
-      res.set({
-        'Content-Type': `image/${result.format}`,
-        'Content-Disposition': `attachment; filename="${downloadFilename}"`,
-        'Content-Length': result.buffer.length,
-        'X-Processing-Time': `${result.processingTime}ms`,
-        'X-Plan': user.plan,
-        'X-Images-Remaining': canProcess.remaining - 1,
-        'X-Monthly-Limit': canProcess.limit,
-        'X-Resolution': `${result.processedInfo.width}x${result.processedInfo.height}`,
-        'X-File-Size': `${result.processedInfo.sizeMB}MB`
-      });
+        // Set response headers
+        const headers = {
+          'Content-Type': `image/${result.format}`,
+          'Content-Disposition': `attachment; filename="${downloadFilename}"`,
+          'Content-Length': result.buffer.length,
+          'X-Processing-Time': `${result.processingTime || 0}ms`,
+          'X-Plan': user.plan,
+          'X-Images-Remaining': canProcess.remaining - 1,
+          'X-Monthly-Limit': canProcess.limit
+        };
 
-      // Send the processed image
-      res.send(result.buffer);
+        // Add resolution and file size if available
+        if (result.processedInfo) {
+          headers['X-Resolution'] = `${result.processedInfo.width}x${result.processedInfo.height}`;
+          headers['X-File-Size'] = `${result.processedInfo.sizeMB}MB`;
+        } else if (result.metadata) {
+          headers['X-Resolution'] = 'unknown';
+          headers['X-File-Size'] = `${(result.buffer.length / 1024 / 1024).toFixed(2)}MB`;
+        }
+
+        res.set(headers);
+
+        // Send the processed image
+        res.send(result.buffer);
+
+      } catch (serviceError) {
+        console.error('❌ ImageService error:', serviceError);
+        
+        // If remove.bg fails but we have a fallback, it should have been handled
+        // If we reach here, all processing methods failed
+        throw {
+          message: serviceError.message || 'All image processing methods failed',
+          statusCode: serviceError.statusCode || 500
+        };
+      }
 
     } catch (error) {
       console.error('❌ Controller error:', error);
@@ -75,7 +108,7 @@ class ImageController {
       res.status(error.statusCode || 500).json({
         success: false,
         error: error.message || 'Failed to process image',
-        code: 'PROCESSING_ERROR'
+        code: error.code || 'PROCESSING_ERROR'
       });
     }
   }
@@ -129,6 +162,12 @@ class ImageController {
         throw new Error(`Failed to download image: ${response.statusText}`);
       }
 
+      // Get content type and size
+      const contentType = response.headers.get('content-type');
+      const contentLength = response.headers.get('content-length');
+      
+      console.log(`📥 Downloaded: ${contentType}, ${contentLength} bytes`);
+
       const imageBuffer = Buffer.from(await response.arrayBuffer());
 
       // Process the downloaded image
@@ -146,15 +185,22 @@ class ImageController {
       const downloadFilename = ImageService.generateDownloadFilename(urlName, user.plan);
 
       // Set response headers
-      res.set({
+      const headers = {
         'Content-Type': `image/${result.format}`,
         'Content-Disposition': `attachment; filename="${downloadFilename}"`,
         'Content-Length': result.buffer.length,
-        'X-Processing-Time': `${result.processingTime}ms`,
+        'X-Processing-Time': `${result.processingTime || 0}ms`,
         'X-Plan': user.plan,
         'X-Images-Remaining': canProcess.remaining - 1
-      });
+      };
 
+      // Add resolution and file size if available
+      if (result.processedInfo) {
+        headers['X-Resolution'] = `${result.processedInfo.width}x${result.processedInfo.height}`;
+        headers['X-File-Size'] = `${result.processedInfo.sizeMB}MB`;
+      }
+
+      res.set(headers);
       res.send(result.buffer);
 
     } catch (error) {
@@ -186,7 +232,10 @@ class ImageController {
         monthlyLimit: canProcess.limit || 0,
         imagesRemaining: canProcess.remaining || 0,
         monthlyResetDate: user.monthlyResetDate,
-        canProcess: canProcess.canProcess
+        canProcess: canProcess.canProcess,
+        // Add resolution info
+        maxResolution: user.getPlanResolutionLabel(),
+        resolutionSettings: user.getPlanResolutionSettings()
       };
 
       res.status(200).json({
@@ -215,7 +264,8 @@ class ImageController {
           removeBg: status.removeBgActive,
           credits: status.credits,
           totalCalls: status.totalCalls,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          apiKeyConfigured: !!status.apiKeyConfigured
         }
       });
     } catch (error) {
@@ -225,6 +275,56 @@ class ImageController {
       });
     }
   }
+
+  /**
+   * Health check endpoint
+   */
+  async healthCheck(req, res) {
+    try {
+      res.status(200).json({
+        success: true,
+        data: {
+          status: 'healthy',
+          timestamp: new Date().toISOString(),
+          service: 'RemoveIt Image Processing API'
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: 'Service unavailable'
+      });
+    }
+  }
+
+  /**
+   * Test endpoint for debugging
+   */
+  async testEndpoint(req, res) {
+    try {
+      console.log('🧪 Test endpoint called');
+      
+      // Test with a simple image or echo
+      res.status(200).json({
+        success: true,
+        data: {
+          message: 'API is working',
+          timestamp: new Date().toISOString(),
+          user: req.user ? {
+            id: req.user._id,
+            email: req.user.email,
+            plan: req.user.plan
+          } : 'No user authenticated'
+        }
+      });
+    } catch (error) {
+      console.error('Test endpoint error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Test failed'
+      });
+    }
+  }
 }
 
-export default new ImageController(); // This exports an instance
+export default new ImageController();
