@@ -1,0 +1,8 @@
+﻿tunnel: dcf13e48-743d-4a2c-b71d-66fe2f92417b
+credentials-file: C:\Users\Rhed\.cloudflared\dcf13e48-743d-4a2c-b71d-66fe2f92417b.json
+originCert: C:\Users\Rhed\.cloudflared\cert.pem
+
+ingress:
+  - hostname: payments.removerio.bond
+    service: http://localhost:3000
+  - service: http_status:404

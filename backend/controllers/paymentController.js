@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import PaystackService from '../services/paystackService.js';
 import Payment from '../models/Payment.js';
 import User from '../models/User.js';
@@ -317,14 +318,34 @@ export const getPlans = async (req, res, next) => {
 // @access  Public (called by Paystack)
 export const webhook = async (req, res, next) => {
   try {
+    const signature = req.headers['x-paystack-signature'];
+    const secret = process.env.PAYSTACK_SECRET_KEY;
     const event = req.body;
     
     console.log('🔔 Paystack webhook received:', event.event);
     
-    // Verify it's from Paystack (you should verify the signature)
-    const signature = req.headers['x-paystack-signature'];
-    // TODO: Implement signature verification here
-
+    // ✅ SIGNATURE VERIFICATION (CRITICAL FOR SECURITY)
+    if (signature && secret) {
+      const hash = crypto
+        .createHmac('sha512', secret)
+        .update(JSON.stringify(req.body))
+        .digest('hex');
+      
+      console.log('🔐 Signature check:', {
+        received: signature?.substring(0, 20) + '...',
+        computed: hash.substring(0, 20) + '...',
+        match: signature === hash
+      });
+      
+      if (signature !== hash) {
+        console.error('❌ Invalid webhook signature');
+        return res.status(400).json({ error: 'Invalid signature' });
+      }
+    } else {
+      console.warn('⚠️ Missing signature or secret key - proceeding anyway');
+    }
+    
+    // Process webhook events
     if (event.event === 'charge.success') {
       const { reference, amount, customer } = event.data;
       console.log(`💰 Webhook: Successful charge for ${reference}`);
@@ -363,12 +384,25 @@ export const webhook = async (req, res, next) => {
           console.log(`✅ User ${user.email} plan updated to ${payment.plan}`);
         }
       }
+    } else if (event.event === 'charge.failure') {
+      console.log(`❌ Payment failed:`, event.data.reference);
+      
+      // Update payment status to failed
+      const payment = await Payment.findOne({ reference: event.data.reference });
+      if (payment && payment.status === 'pending') {
+        payment.status = 'failed';
+        payment.paystackResponse = event.data;
+        await payment.save();
+        console.log(`📝 Updated payment ${event.data.reference} to failed`);
+      }
+    } else if (event.event === 'transfer.success') {
+      console.log('✅ Transfer completed:', event.data.reference);
     }
 
-    // Always return 200 to Paystack
+    // Always return 200 to Paystack (even if we had errors)
     res.status(200).json({ received: true });
   } catch (error) {
-    console.error('❌ Webhook error:', error);
+    console.error('❌ Webhook processing error:', error);
     res.status(200).json({ received: true });
   }
 };
