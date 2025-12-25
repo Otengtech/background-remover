@@ -17,6 +17,7 @@ import {
   FiUsers,
   FiRefreshCw
 } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 const ImageUpload = () => {
   const { user } = useAuth();
@@ -536,12 +537,13 @@ const ImageUpload = () => {
               </div>
               
               {user?.plan !== 'pro' && (
-                <button
-                  onClick={() => window.location.href = '/pricing'}
-                  className="w-full mt-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:opacity-90 text-sm font-medium"
+                <Link to="/pricing"
                 >
+                <button className="w-full mt-4 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600
+                 rounded-lg hover:opacity-90 text-sm font-medium">
                   Upgrade Plan
                 </button>
+                </Link>
               )}
             </div>
 

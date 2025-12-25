@@ -7,7 +7,6 @@ const Features = () => {
   const titleRef = useScrollReveal();
   const subtitleRef = useScrollReveal();
   const featuresRef = useScrollRevealMap(4); // Create array of 4 refs
-  const ctaButtonsRef = useScrollRevealMap(2); // Create array of 2 refs for buttons
 
   const features = [
     {
@@ -47,9 +46,8 @@ const Features = () => {
             </span>
           </div>
           
-          <h2 ref={titleRef} className="scroll-reveal from-bottom text-3xl md:text-4xl font-bold text-white mb-4">
-            Professional Background Removal,
-            <span className="block text-primary-300">Simplified</span>
+          <h2 ref={titleRef} className="scroll-reveal from-bottom md:from-right text-4xl md:text-5xl font-bold text-white mb-4">
+            Background Remover
           </h2>
           
           <p ref={subtitleRef} className="scroll-reveal from-bottom text-gray-300 max-w-2xl mx-auto">
