@@ -23,7 +23,7 @@ class PaystackService {
           amount: amountInKobo,
           currency: 'GHS',
           metadata,
-          callback_url: `${process.env.FRONTEND_URL || 'https://www.removerio.bond'}/dashboard`
+          callback_url: `${process.env.FRONTEND_URL || 'https://www.removerio.bond'}/#/dashboard`
         },
         {
           headers: {
