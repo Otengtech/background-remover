@@ -10,36 +10,34 @@ class PaystackService {
 
   // Initialize transaction
   async initializeTransaction(email, amount, metadata = {}) {
-    try {
-      // Paystack expects amount in kobo (100 kobo = 1 GHS)
-      const amountInKobo = Math.round(amount * 100);
-      
-      console.log(`💰 Converting ${amount} GHS to ${amountInKobo} kobo`);
-      
-      const response = await axios.post(
-        `${this.baseURL}/transaction/initialize`,
-        {
-          email,
-          amount: amountInKobo,
-          currency: 'GHS',
-          metadata,
-          callback_url: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/dashboard?payment_callback=true`
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.secretKey}`,
-            'Content-Type': 'application/json'
-          }
+  try {
+    const amountInKobo = Math.round(amount * 100);
+    
+    console.log(`💰 Converting ${amount} GHS to ${amountInKobo} kobo`);
+    
+    const response = await axios.post(
+      `${this.baseURL}/transaction/initialize`,
+      {
+        email,
+        amount: amountInKobo,
+        currency: 'GHS',
+        metadata,
+        // 🚨 FIX THIS LINE - Add full URL with both params
+        callback_url: `${process.env.FRONTEND_URL || 'https://www.removerio.bond'}/dashboard?payment_callback=true`
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${this.secretKey}`,
+          'Content-Type': 'application/json'
         }
-      );
+      }
+    );
 
-      console.log('✅ Paystack initialization response:', response.data);
-
-      return {
-        success: true,
-        data: response.data.data
-      };
-    } catch (error) {
+    return {
+      success: true,
+      data: response.data.data
+    };
+  }  catch (error) {
       console.error('❌ Paystack initialization error:', {
         message: error.message,
         response: error.response?.data,
