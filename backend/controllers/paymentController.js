@@ -109,6 +109,9 @@ export const initializePayment = async (req, res, next) => {
 // @desc    Verify payment
 // @route   POST /api/payments/verify
 // @access  Private
+// @desc    Verify payment
+// @route   POST /api/payments/verify
+// @access  Private
 export const verifyPayment = async (req, res, next) => {
   try {
     const { reference } = req.body;
@@ -140,9 +143,20 @@ export const verifyPayment = async (req, res, next) => {
     // If already verified
     if (payment.status === 'success') {
       console.log('ℹ️ Payment already verified');
-      return res.status(400).json({
-        success: false,
-        error: 'Payment already verified'
+      
+      // Get updated user data
+      const updatedUser = await User.findById(user._id);
+      
+      return res.status(200).json({
+        success: true,
+        message: 'Payment already verified',
+        data: {
+          plan: updatedUser.plan,
+          planExpiry: updatedUser.planExpiry,
+          subscriptionStatus: 'active',
+          reference: payment.reference,
+          alreadyProcessed: true
+        }
       });
     }
 
@@ -152,8 +166,8 @@ export const verifyPayment = async (req, res, next) => {
     if (!verification.success) {
       console.error('❌ Paystack verification failed:', verification.error);
       
-      // Update payment status to failed
       payment.status = 'failed';
+      payment.failureReason = verification.error;
       await payment.save();
 
       return res.status(400).json({
@@ -200,22 +214,36 @@ export const verifyPayment = async (req, res, next) => {
       });
     }
 
-    // Update payment record
+    // ✅ CRITICAL FIX: Update payment record FIRST
     payment.status = 'success';
-    payment.paidAt = new Date(paystackData.paid_at);
+    payment.paidAt = new Date(paystackData.paid_at || paystackData.transaction_date);
     payment.paystackResponse = paystackData;
     await payment.save();
 
     console.log('✅ Payment record updated to success');
 
-    // Update user plan
-    user.plan = payment.plan;
-    user.planExpiry = payment.expiresAt;
-    user.subscription.status = 'active';
-    user.subscription.currentPeriodEnd = payment.expiresAt;
+    // ✅ CRITICAL FIX: Update user plan
+    const updatedUser = await User.findById(user._id);
+    
+    updatedUser.plan = payment.plan;
+    updatedUser.planExpiry = payment.expiresAt;
+    
+    // ✅ Ensure subscription object exists
+    if (!updatedUser.subscription) {
+      updatedUser.subscription = {};
+    }
+    
+    updatedUser.subscription.status = 'active';
+    updatedUser.subscription.currentPeriodEnd = payment.expiresAt;
+    updatedUser.subscription.plan = payment.plan;
+    updatedUser.subscription.startedAt = new Date();
 
-    // Add to payment history
-    user.paymentHistory.unshift({
+    // ✅ Add to payment history
+    if (!updatedUser.paymentHistory) {
+      updatedUser.paymentHistory = [];
+    }
+    
+    updatedUser.paymentHistory.unshift({
       reference: payment.reference,
       amount: payment.amount,
       currency: payment.currency,
@@ -225,20 +253,23 @@ export const verifyPayment = async (req, res, next) => {
       expiresAt: payment.expiresAt
     });
 
-    // Reset monthly usage counter
-    user.monthlyImagesUsed = 0;
-    user.monthlyResetDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+    // ✅ Reset monthly usage counter
+    updatedUser.monthlyImagesUsed = 0;
+    updatedUser.monthlyResetDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
 
-    await user.save();
+    await updatedUser.save();
 
     console.log('✅ User plan updated successfully');
+    console.log(`👤 User ${updatedUser.email} now has ${updatedUser.plan} plan`);
+    console.log(`📅 Plan expires on: ${updatedUser.planExpiry}`);
 
     res.status(200).json({
       success: true,
       message: 'Payment verified successfully',
       data: {
-        plan: user.plan,
-        planExpiry: user.planExpiry,
+        plan: updatedUser.plan,
+        planExpiry: updatedUser.planExpiry,
+        subscriptionStatus: updatedUser.subscription.status,
         reference: payment.reference,
         amount: payment.amount,
         currency: payment.currency,
@@ -317,32 +348,23 @@ export const getPlans = async (req, res, next) => {
 // @desc    Webhook for Paystack notifications
 // @route   POST /api/payments/webhook
 // @access  Public (called by Paystack)
-
 export const webhook = async (req, res, next) => {
   try {
     // 🚨 REMOVE HARDCODED KEY - USE ENVIRONMENT VARIABLE
-    const secret = process.env.PAYSTACK_SECRET_KEY; // Changed from hardcoded
+    const secret = process.env.PAYSTACK_SECRET_KEY;
     
-    // 🚨 DEBUG: Log everything
-    console.log('=== WEBHOOK DEBUG ===');
+    // Log webhook receipt
+    console.log('=== WEBHOOK RECEIVED ===');
     
     const signature = req.headers['x-paystack-signature'];
     const event = req.body?.event;
     
-    // Check if this is a test from you
-    if (req.body && !event && Object.keys(req.body).length === 0) {
-      console.log('📝 Empty POST request received (browser test?)');
-      return res.status(200).json({ received: true, note: 'Empty test' });
-    }
-    
     // Check if this is a real Paystack webhook
     if (!event) {
       console.warn('⚠️ Webhook called without event field');
-      console.log('Full body:', JSON.stringify(req.body, null, 2));
       return res.status(200).json({ 
         received: true, 
-        warning: 'No event field in payload',
-        bodyReceived: req.body 
+        warning: 'No event field in payload'
       });
     }
     
@@ -350,7 +372,6 @@ export const webhook = async (req, res, next) => {
     
     // ✅ SIGNATURE VERIFICATION
     if (signature && secret) {
-      // IMPORTANT: Use raw body for signature verification
       const rawBody = JSON.stringify(req.body);
       const hash = crypto
         .createHmac('sha512', secret)
@@ -360,9 +381,7 @@ export const webhook = async (req, res, next) => {
       console.log('🔐 Signature check:', {
         signatureLength: signature.length,
         hashLength: hash.length,
-        match: signature === hash,
-        signatureStart: signature.substring(0, 20),
-        hashStart: hash.substring(0, 20)
+        match: signature === hash
       });
       
       if (signature !== hash) {
@@ -372,22 +391,119 @@ export const webhook = async (req, res, next) => {
       console.log('✅ Signature verified successfully');
     } else {
       console.warn(`⚠️ Missing: ${!signature ? 'signature' : 'secret key'}`);
-      console.log('Secret key exists?', !!secret);
-      console.log('Signature exists?', !!signature);
     }
     
-    // Rest of your existing event processing code...
-    // Keep your existing event handling logic here
+    // Handle charge.success event
     if (event === 'charge.success') {
-      const { reference, amount, customer } = req.body.data;
+      const { reference, amount, customer, paid_at } = req.body.data;
       console.log(`💰 Webhook: Successful charge for ${reference}`);
       
-      // ... rest of your charge.success handling
+      // Find payment record
+      const payment = await Payment.findOne({ reference });
+      
+      if (!payment) {
+        console.error(`❌ Payment not found for reference: ${reference}`);
+        return res.status(200).json({ 
+          received: true, 
+          error: 'Payment not found' 
+        });
+      }
+      
+      // If already processed
+      if (payment.status === 'success') {
+        console.log(`ℹ️ Payment already processed: ${reference}`);
+        return res.status(200).json({ 
+          received: true, 
+          message: 'Already processed' 
+        });
+      }
+      
+      // Verify amount matches
+      const expectedAmount = getPriceInKobo(payment.plan);
+      console.log(`💰 Amount check: expected ${expectedAmount}, got ${amount}`);
+      
+      if (amount !== expectedAmount) {
+        console.error(`❌ Amount mismatch for ${reference}`);
+        payment.status = 'failed';
+        payment.failureReason = 'Amount mismatch';
+        await payment.save();
+        return res.status(200).json({ 
+          received: true, 
+          error: 'Amount mismatch' 
+        });
+      }
+      
+      // ✅ CRITICAL FIX: Update payment record
+      payment.status = 'success';
+      payment.paidAt = new Date(paid_at);
+      payment.paystackResponse = req.body.data;
+      await payment.save();
+      
+      console.log(`✅ Payment updated to success: ${reference}`);
+      
+      // ✅ CRITICAL FIX: Update user's plan
+      const user = await User.findById(payment.user);
+      if (!user) {
+        console.error(`❌ User not found for payment: ${reference}`);
+        return res.status(200).json({ 
+          received: true, 
+          error: 'User not found' 
+        });
+      }
+      
+      console.log(`👤 Updating user ${user.email} to ${payment.plan} plan`);
+      
+      // Update user plan
+      user.plan = payment.plan;
+      user.planExpiry = payment.expiresAt;
+      
+      // Ensure subscription object exists
+      if (!user.subscription) {
+        user.subscription = {};
+      }
+      
+      user.subscription.status = 'active';
+      user.subscription.currentPeriodEnd = payment.expiresAt;
+      user.subscription.plan = payment.plan;
+      user.subscription.startedAt = new Date();
+      
+      // Add to payment history
+      if (!user.paymentHistory) {
+        user.paymentHistory = [];
+      }
+      
+      user.paymentHistory.unshift({
+        reference: payment.reference,
+        amount: payment.amount,
+        currency: payment.currency,
+        plan: payment.plan,
+        status: 'success',
+        paidAt: payment.paidAt,
+        expiresAt: payment.expiresAt
+      });
+      
+      // Reset monthly usage counter
+      user.monthlyImagesUsed = 0;
+      user.monthlyResetDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
+      
+      await user.save();
+      
+      console.log(`✅ User ${user.email} successfully updated to ${payment.plan} plan`);
+      console.log(`📅 Plan expires on: ${payment.expiresAt}`);
     }
     
-    res.status(200).json({ received: true });
+    // Always return 200 to Paystack
+    res.status(200).json({ 
+      received: true,
+      message: 'Webhook processed successfully'
+    });
+    
   } catch (error) {
     console.error('❌ Webhook processing error:', error);
-    res.status(200).json({ received: true, error: error.message });
+    // Still return 200 to prevent Paystack from retrying
+    res.status(200).json({ 
+      received: true, 
+      error: error.message 
+    });
   }
 };
