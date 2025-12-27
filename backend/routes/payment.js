@@ -6,7 +6,8 @@ import {
   getPaymentHistory,
   getSubscription,
   getPlans,
-  webhook
+  webhook,
+  refreshUserData
 } from '../controllers/paymentController.js';
 
 const router = express.Router();
@@ -14,6 +15,7 @@ const router = express.Router();
 // Public routes
 router.get('/plans', getPlans);
 router.post('/webhook', webhook); // Paystack webhook
+router.get('/refresh-user', protect, refreshUserData);
 
 // Protected routes
 router.post('/initialize', protect, initializePayment);

@@ -46,18 +46,20 @@ const userSchema = new mongoose.Schema({
       return new Date(now.getFullYear(), now.getMonth() + 1, 1);
     }
   },
-  subscription: {
-    status: {
-      type: String,
-      enum: ['active', 'inactive', 'cancelled', 'expired'],
-      default: 'inactive'
-    },
-    currentPeriodEnd: Date,
-    cancelAtPeriodEnd: {
-      type: Boolean,
-      default: false
-    }
+ subscription: {
+  status: {
+    type: String,
+    enum: ['active', 'inactive', 'cancelled', 'expired'],
+    default: 'inactive'
   },
+  currentPeriodEnd: Date,
+  plan: String,  // Add this field
+  startedAt: Date,  // Add this field
+  cancelAtPeriodEnd: {
+    type: Boolean,
+    default: false
+  }
+},
   paymentHistory: [{
     reference: String,
     amount: Number,

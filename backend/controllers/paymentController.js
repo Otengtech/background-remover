@@ -109,9 +109,6 @@ export const initializePayment = async (req, res, next) => {
 // @desc    Verify payment
 // @route   POST /api/payments/verify
 // @access  Private
-// @desc    Verify payment
-// @route   POST /api/payments/verify
-// @access  Private
 export const verifyPayment = async (req, res, next) => {
   try {
     const { reference } = req.body;
@@ -151,9 +148,17 @@ export const verifyPayment = async (req, res, next) => {
         success: true,
         message: 'Payment already verified',
         data: {
-          plan: updatedUser.plan,
-          planExpiry: updatedUser.planExpiry,
-          subscriptionStatus: 'active',
+          user: {
+            _id: updatedUser._id,
+            email: updatedUser.email,
+            name: updatedUser.name,
+            plan: updatedUser.plan,
+            planExpiry: updatedUser.planExpiry,
+            subscription: updatedUser.subscription,
+            monthlyImagesUsed: updatedUser.monthlyImagesUsed || 0,
+            monthlyResetDate: updatedUser.monthlyResetDate,
+            imagesProcessed: updatedUser.imagesProcessed || 0
+          },
           reference: payment.reference,
           alreadyProcessed: true
         }
@@ -214,7 +219,7 @@ export const verifyPayment = async (req, res, next) => {
       });
     }
 
-    // ✅ CRITICAL FIX: Update payment record FIRST
+    // ✅ Update payment record
     payment.status = 'success';
     payment.paidAt = new Date(paystackData.paid_at || paystackData.transaction_date);
     payment.paystackResponse = paystackData;
@@ -222,23 +227,23 @@ export const verifyPayment = async (req, res, next) => {
 
     console.log('✅ Payment record updated to success');
 
-    // ✅ CRITICAL FIX: Update user plan
+    // ✅ Update user plan - FIXED!
     const updatedUser = await User.findById(user._id);
     
+    // Update basic user fields
     updatedUser.plan = payment.plan;
     updatedUser.planExpiry = payment.expiresAt;
     
-    // ✅ Ensure subscription object exists
-    if (!updatedUser.subscription) {
-      updatedUser.subscription = {};
-    }
-    
-    updatedUser.subscription.status = 'active';
-    updatedUser.subscription.currentPeriodEnd = payment.expiresAt;
-    updatedUser.subscription.plan = payment.plan;
-    updatedUser.subscription.startedAt = new Date();
+    // Update subscription object - FIXED STRUCTURE
+    updatedUser.subscription = {
+      status: 'active',
+      currentPeriodEnd: payment.expiresAt,
+      plan: payment.plan,
+      startedAt: new Date(),
+      cancelAtPeriodEnd: false
+    };
 
-    // ✅ Add to payment history
+    // Add to payment history
     if (!updatedUser.paymentHistory) {
       updatedUser.paymentHistory = [];
     }
@@ -253,7 +258,7 @@ export const verifyPayment = async (req, res, next) => {
       expiresAt: payment.expiresAt
     });
 
-    // ✅ Reset monthly usage counter
+    // Reset monthly usage counter
     updatedUser.monthlyImagesUsed = 0;
     updatedUser.monthlyResetDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
 
@@ -262,18 +267,35 @@ export const verifyPayment = async (req, res, next) => {
     console.log('✅ User plan updated successfully');
     console.log(`👤 User ${updatedUser.email} now has ${updatedUser.plan} plan`);
     console.log(`📅 Plan expires on: ${updatedUser.planExpiry}`);
+    console.log(`📊 Subscription: ${JSON.stringify(updatedUser.subscription)}`);
 
+    // Return FULL user data to frontend
     res.status(200).json({
       success: true,
       message: 'Payment verified successfully',
       data: {
-        plan: updatedUser.plan,
-        planExpiry: updatedUser.planExpiry,
-        subscriptionStatus: updatedUser.subscription.status,
-        reference: payment.reference,
-        amount: payment.amount,
-        currency: payment.currency,
-        paidAt: payment.paidAt
+        user: {
+          _id: updatedUser._id,
+          email: updatedUser.email,
+          name: updatedUser.name,
+          plan: updatedUser.plan,
+          planExpiry: updatedUser.planExpiry,
+          subscription: updatedUser.subscription,
+          monthlyImagesUsed: updatedUser.monthlyImagesUsed || 0,
+          monthlyResetDate: updatedUser.monthlyResetDate,
+          imagesProcessed: updatedUser.imagesProcessed || 0,
+          isPlanActive: updatedUser.isPlanActive(),
+          remainingDays: updatedUser.getPlanRemainingDays(),
+          canProcessImage: updatedUser.canProcessImage()
+        },
+        payment: {
+          reference: payment.reference,
+          amount: payment.amount,
+          currency: payment.currency,
+          plan: payment.plan,
+          paidAt: payment.paidAt,
+          expiresAt: payment.expiresAt
+        }
       }
     });
   } catch (error) {
@@ -350,16 +372,13 @@ export const getPlans = async (req, res, next) => {
 // @access  Public (called by Paystack)
 export const webhook = async (req, res, next) => {
   try {
-    // 🚨 REMOVE HARDCODED KEY - USE ENVIRONMENT VARIABLE
     const secret = process.env.PAYSTACK_SECRET_KEY;
     
-    // Log webhook receipt
     console.log('=== WEBHOOK RECEIVED ===');
     
     const signature = req.headers['x-paystack-signature'];
     const event = req.body?.event;
     
-    // Check if this is a real Paystack webhook
     if (!event) {
       console.warn('⚠️ Webhook called without event field');
       return res.status(200).json({ 
@@ -433,7 +452,7 @@ export const webhook = async (req, res, next) => {
         });
       }
       
-      // ✅ CRITICAL FIX: Update payment record
+      // ✅ Update payment record
       payment.status = 'success';
       payment.paidAt = new Date(paid_at);
       payment.paystackResponse = req.body.data;
@@ -441,7 +460,7 @@ export const webhook = async (req, res, next) => {
       
       console.log(`✅ Payment updated to success: ${reference}`);
       
-      // ✅ CRITICAL FIX: Update user's plan
+      // ✅ Update user's plan - FIXED!
       const user = await User.findById(payment.user);
       if (!user) {
         console.error(`❌ User not found for payment: ${reference}`);
@@ -457,15 +476,14 @@ export const webhook = async (req, res, next) => {
       user.plan = payment.plan;
       user.planExpiry = payment.expiresAt;
       
-      // Ensure subscription object exists
-      if (!user.subscription) {
-        user.subscription = {};
-      }
-      
-      user.subscription.status = 'active';
-      user.subscription.currentPeriodEnd = payment.expiresAt;
-      user.subscription.plan = payment.plan;
-      user.subscription.startedAt = new Date();
+      // Update subscription object - FIXED!
+      user.subscription = {
+        status: 'active',
+        currentPeriodEnd: payment.expiresAt,
+        plan: payment.plan,
+        startedAt: new Date(),
+        cancelAtPeriodEnd: false
+      };
       
       // Add to payment history
       if (!user.paymentHistory) {
@@ -490,6 +508,7 @@ export const webhook = async (req, res, next) => {
       
       console.log(`✅ User ${user.email} successfully updated to ${payment.plan} plan`);
       console.log(`📅 Plan expires on: ${payment.expiresAt}`);
+      console.log(`📊 Subscription: ${JSON.stringify(user.subscription)}`);
     }
     
     // Always return 200 to Paystack
@@ -500,10 +519,52 @@ export const webhook = async (req, res, next) => {
     
   } catch (error) {
     console.error('❌ Webhook processing error:', error);
-    // Still return 200 to prevent Paystack from retrying
     res.status(200).json({ 
       received: true, 
       error: error.message 
     });
+  }
+};
+
+// @desc    Refresh user data
+// @route   GET /api/payments/refresh-user
+// @access  Private
+export const refreshUserData = async (req, res, next) => {
+  try {
+    const user = req.user;
+    
+    // Get fresh user data from database
+    const freshUser = await User.findById(user._id);
+    
+    if (!freshUser) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        user: {
+          _id: freshUser._id,
+          email: freshUser.email,
+          name: freshUser.name,
+          plan: freshUser.plan,
+          planExpiry: freshUser.planExpiry,
+          subscription: freshUser.subscription,
+          monthlyImagesUsed: freshUser.monthlyImagesUsed || 0,
+          monthlyResetDate: freshUser.monthlyResetDate,
+          imagesProcessed: freshUser.imagesProcessed || 0,
+          isPlanActive: freshUser.isPlanActive(),
+          remainingDays: freshUser.getPlanRemainingDays(),
+          canProcessImage: freshUser.canProcessImage()
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Refresh user data error:', error);
+    next(error);
   }
 };
