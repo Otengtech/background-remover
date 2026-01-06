@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import {
   useScrollReveal,
   useScrollRevealMap,
@@ -21,7 +20,6 @@ import {
 } from "react-icons/fi";
 
 const Home = () => {
-  const { isAuthenticated } = useAuth();
 
   // Create refs for animations
   const heroTagRef = useScrollReveal();
@@ -107,7 +105,6 @@ const Home = () => {
                 className="scroll-reveal from-left flex gap-4 flex-wrap"
                 style={{ transitionDelay: "0.3s" }}
               >
-                {isAuthenticated ? (
                   <div className="flex items-center justify-center space-x-3">
                     <Link
                       to="/dashboard"
@@ -124,19 +121,6 @@ const Home = () => {
                       <FiArrowRight />
                     </Link>
                   </div>
-                ) : (
-                  <>
-                    <Link
-                      to="/register"
-                      className="btn-primary px-8 py-4 flex items-center gap-2"
-                    >
-                      Start Free <FiArrowRight />
-                    </Link>
-                    <Link to="/login" className="btn-secondary px-8 py-4">
-                      Sign In
-                    </Link>
-                  </>
-                )}
               </div>
 
               {/* Features Grid */}
@@ -299,7 +283,6 @@ const Feature = ({ icon, text, index }) => {
 const FeaturesSection = () => {
   const sectionRef = useScrollReveal();
   const featureCardsRef = useScrollRevealMap(3);
-  const { isAuthenticated } = useAuth();
   const contactRef = useScrollReveal();
   const features = [
     {
@@ -370,21 +353,6 @@ const FeaturesSection = () => {
       >
         <FiMessageSquare className="text-4xl text-blue-400 mx-auto mb-4" />
         <h2 className="text-2xl font-bold mb-4">Start processing images</h2>
-        {!isAuthenticated ? (
-          <div>
-            <p className="text-gray-300 mb-6">
-              Login into your account to start processing images.
-            </p>
-            <div className="flex justify-center gap-4">
-              <Link
-                to="/login"
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg"
-              >
-                Login to account
-              </Link>
-            </div>
-          </div>
-        ) : (
           <div>
             <p className="text-gray-300 mb-6">
               Move to bg remover page to start processing images.
@@ -398,7 +366,6 @@ const FeaturesSection = () => {
               </Link>
             </div>
           </div>
-        )}
       </section>
     </section>
   );

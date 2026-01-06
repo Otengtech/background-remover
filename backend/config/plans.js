@@ -3,66 +3,49 @@ const plans = {
     name: 'Free',
     price: 0,
     imagesPerMonth: 10,
-    resolution: '720p',
+    resolution: '360p',
+    maxFileSize: 5, // MB
     duration: null,
     features: [
-      'Basic background removal',
-      'Standard resolution (720p)',
       '10 images per month',
+      '360p resolution',
+      'Basic background removal',
       'JPG & PNG format',
       'Community support'
     ]
   },
-  basic: {
-    name: 'Basic',
-    price: 0.2,
-    imagesPerMonth: 100,
-    resolution: '1080p',
-    duration: 30,
-    features: [
-      'Advanced AI processing',
-      'HD resolution (1080p)',
-      '100 images per month',
-      'All formats (PNG, JPG, WebP)',
-      'Priority processing',
-      'No watermark',
-      'Email support'
-    ]
-  },
   pro: {
     name: 'Pro',
-    price: 5,
+    price: 0.02, // GHS
     imagesPerMonth: 'unlimited',
-    resolution: '4K',
-    duration: 30,
+    resolution: '4K Ultra HD',
+    maxFileSize: 25, // MB
+    duration: 30, // days
     features: [
-      'Premium AI processing',
-      '4K Ultra HD resolution',
       'Unlimited images',
+      '4K Ultra HD resolution',
+      'Premium AI processing',
       'All formats + TIFF',
       'Instant processing',
       'Commercial license',
-      'API access',
-      '24/7 priority support',
-      'White-label options'
+      '24/7 priority support'
     ]
   }
 };
 
-// Calculate expiry date based on plan
+// Calculate expiry date
 const calculateExpiryDate = (planType) => {
   if (planType === 'free') return null;
   
-  const duration = plans[planType].duration;
   const expiryDate = new Date();
-  expiryDate.setDate(expiryDate.getDate() + duration);
+  expiryDate.setDate(expiryDate.getDate() + 30);
   return expiryDate;
 };
 
-// Get plan price in kobo (Paystack expects amount in kobo)
+// Get price in kobo for Paystack
 const getPriceInKobo = (planType) => {
   const price = plans[planType].price;
-  return Math.round(price * 100);
+  return Math.round(price * 100); // Convert GHS to kobo
 };
 
 export { plans, calculateExpiryDate, getPriceInKobo };

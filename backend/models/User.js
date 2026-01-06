@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
   },
   plan: {
     type: String,
-    enum: ['free', 'basic', 'pro'],
+    enum: ['free', 'pro'],
     default: 'free'
   },
   planExpiry: {
@@ -46,20 +46,20 @@ const userSchema = new mongoose.Schema({
       return new Date(now.getFullYear(), now.getMonth() + 1, 1);
     }
   },
- subscription: {
-  status: {
-    type: String,
-    enum: ['active', 'inactive', 'cancelled', 'expired'],
-    default: 'inactive'
+  subscription: {
+    status: {
+      type: String,
+      enum: ['active', 'inactive', 'cancelled', 'expired'],
+      default: 'inactive'
+    },
+    currentPeriodEnd: Date,
+    plan: String,
+    startedAt: Date,
+    cancelAtPeriodEnd: {
+      type: Boolean,
+      default: false
+    }
   },
-  currentPeriodEnd: Date,
-  plan: String,  // Add this field
-  startedAt: Date,  // Add this field
-  cancelAtPeriodEnd: {
-    type: Boolean,
-    default: false
-  }
-},
   paymentHistory: [{
     reference: String,
     amount: Number,
@@ -139,7 +139,7 @@ userSchema.methods.getPlanRemainingDays = function() {
   return diffDays > 0 ? diffDays : 0;
 };
 
-// Check if user can process image based on plan limits
+// Check if user can process image
 userSchema.methods.canProcessImage = function() {
   // Check if plan is active for paid plans
   if (this.plan !== 'free' && !this.isPlanActive()) {
@@ -153,27 +153,26 @@ userSchema.methods.canProcessImage = function() {
   
   // Check monthly limits
   const planLimits = {
-    free: 50,     // 50 images/month
-    basic: 500,   // 500 images/month
-    pro: 5000     // 5000 images/month (effectively unlimited)
+    free: 10,     // 10 images/month
+    pro: Infinity // Unlimited for pro
   };
   
   const limit = planLimits[this.plan];
   
-  // For pro plan with "unlimited" (5000), always allow
+  // For pro plan, always allow
   if (this.plan === 'pro') {
     return { 
       canProcess: true, 
       reason: '',
-      limit: limit,
-      remaining: limit - this.monthlyImagesUsed
+      limit: 'unlimited',
+      remaining: 'unlimited'
     };
   }
   
   if (this.monthlyImagesUsed >= limit) {
     return { 
       canProcess: false, 
-      reason: `Monthly limit reached (${limit} images). Upgrade plan for more.`,
+      reason: `Monthly limit reached (${limit} images). Upgrade to Pro for unlimited access.`,
       limit: limit,
       remaining: 0
     };
@@ -187,38 +186,14 @@ userSchema.methods.canProcessImage = function() {
   };
 };
 
-// Get plan-based resolution settings
-userSchema.methods.getPlanResolutionSettings = function() {
-  const resolutions = {
-    free: { 
-      width: 1280, 
-      height: 720, 
-      quality: 80, 
-      label: 'SD (720p max)',
-      maxFileSize: 10 * 1024 * 1024 // 10MB
-    },
-    basic: { 
-      width: 1920, 
-      height: 1080, 
-      quality: 90, 
-      label: 'HD (1080p max)',
-      maxFileSize: 20 * 1024 * 1024 // 20MB
-    },
-    pro: { 
-      width: 3840, 
-      height: 2160, 
-      quality: 100, 
-      label: '4K Ultra HD',
-      maxFileSize: 50 * 1024 * 1024 // 50MB
-    }
-  };
-  return resolutions[this.plan] || resolutions.free;
+// Get plan resolution
+userSchema.methods.getPlanResolution = function() {
+  return this.plan === 'free' ? '360p' : '4K Ultra HD';
 };
 
-// Get plan resolution label (simple version)
-userSchema.methods.getPlanResolutionLabel = function() {
-  const resolutionSettings = this.getPlanResolutionSettings();
-  return resolutionSettings.label;
+// Get max file size for plan
+userSchema.methods.getMaxFileSize = function() {
+  return this.plan === 'free' ? 5 : 25; // MB
 };
 
 // Increment processed images
@@ -238,15 +213,130 @@ userSchema.methods.addPayment = async function(paymentData) {
 userSchema.methods.updatePlan = async function(plan, expiryDate) {
   this.plan = plan;
   this.planExpiry = expiryDate;
+  this.subscription = {
+    status: 'active',
+    currentPeriodEnd: expiryDate,
+    plan: plan,
+    startedAt: new Date(),
+    cancelAtPeriodEnd: false
+  };
   await this.save();
 };
 
-// Reset monthly usage (admin function)
-userSchema.methods.resetMonthlyUsage = async function() {
-  this.monthlyImagesUsed = 0;
-  this.monthlyResetDate = new Date();
-  this.monthlyResetDate.setMonth(this.monthlyResetDate.getMonth() + 1);
+// In your User model (models/User.js), add these methods:
+
+/**
+ * Check if user can process image
+ */
+userSchema.methods.canProcessImage = function() {
+  const now = new Date();
+  
+  // Check if plan is active
+  if (!this.isPlanActive()) {
+    return {
+      canProcess: false,
+      reason: 'Plan expired. Please upgrade to continue.',
+      remaining: 0
+    };
+  }
+  
+  // Handle free plan limits
+  if (this.plan === 'free') {
+    const monthlyLimit = 10;
+    
+    // Reset monthly count if it's a new month
+    if (this.monthlyResetDate && now > this.monthlyResetDate) {
+      this.monthlyImagesUsed = 0;
+      this.monthlyResetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    }
+    
+    if (this.monthlyImagesUsed >= monthlyLimit) {
+      return {
+        canProcess: false,
+        reason: 'Monthly limit reached. Upgrade to Pro for unlimited access.',
+        remaining: 0
+      };
+    }
+    
+    return {
+      canProcess: true,
+      reason: '',
+      remaining: monthlyLimit - this.monthlyImagesUsed
+    };
+  }
+  
+  // Pro plan - unlimited
+  return {
+    canProcess: true,
+    reason: '',
+    remaining: 'unlimited'
+  };
+};
+
+/**
+ * Increment processed images count
+ */
+userSchema.methods.incrementProcessedImages = async function() {
+  this.imagesProcessed = (this.imagesProcessed || 0) + 1;
+  this.monthlyImagesUsed = (this.monthlyImagesUsed || 0) + 1;
+  this.lastProcessedAt = new Date();
+  
+  // Set monthly reset date if not set
+  if (!this.monthlyResetDate) {
+    const now = new Date();
+    this.monthlyResetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  }
+  
   await this.save();
+  return this;
+};
+
+/**
+ * Check if plan is active
+ */
+userSchema.methods.isPlanActive = function() {
+  if (this.plan === 'free') {
+    return true; // Free plan is always active
+  }
+  
+  if (this.plan === 'pro' && this.planExpiry) {
+    return new Date() < new Date(this.planExpiry);
+  }
+  
+  return false;
+};
+
+/**
+ * Get plan resolution
+ */
+userSchema.methods.getPlanResolution = function() {
+  return this.plan === 'pro' ? '4K Ultra HD' : '360p';
+};
+
+/**
+ * Get max file size in MB
+ */
+userSchema.methods.getMaxFileSize = function() {
+  return this.plan === 'pro' ? 25 : 5; // MB
+};
+
+/**
+ * Get remaining days in plan
+ */
+userSchema.methods.getPlanRemainingDays = function() {
+  if (this.plan === 'free') {
+    return 'unlimited';
+  }
+  
+  if (this.planExpiry) {
+    const now = new Date();
+    const expiry = new Date(this.planExpiry);
+    const diffTime = Math.abs(expiry - now);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(0, diffDays);
+  }
+  
+  return 0;
 };
 
 const User = mongoose.model('User', userSchema);
