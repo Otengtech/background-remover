@@ -21,7 +21,6 @@ import { HelmetProvider } from "react-helmet-async";
 function App() {
   return (
     <HelmetProvider>
-      <MetaTags />
       <ScrollToTop />
       <div className="min-h-screen flex flex-col">
         <Navbar />
