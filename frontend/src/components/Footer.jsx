@@ -26,13 +26,13 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/features" className="text-gray-400 hover:text-white transition-colors">
-                  Features
+                <Link to="/dashboard" className="text-gray-400 hover:text-white transition-colors">
+                  Converter
                 </Link>
               </li>
               <li>
-                <Link to="/pricing" className="text-gray-400 hover:text-white transition-colors">
-                  Pricing
+                <Link to="/features" className="text-gray-400 hover:text-white transition-colors">
+                  Features
                 </Link>
               </li>
               <li>

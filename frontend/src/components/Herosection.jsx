@@ -110,7 +110,7 @@ const Home = () => {
                       to="/dashboard"
                       className="btn-primary px-8 py-4 flex items-center gap-2"
                     >
-                      Start Removing
+                      Try Now
                       <FiArrowRight />
                     </Link>
                     <Link
