@@ -153,8 +153,6 @@ const handleDownload = async () => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
     
-    toast.success(`✅ Image saved as`);
-    
   } catch (error) {
     console.error('Download error:', error);
     toast.error('Failed to download image to storage');
@@ -357,14 +355,14 @@ const handleDownload = async () => {
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       onClick={handleDownload}
-                      className="py-4 bg-[#7c3aed] text-white font-bold rounded-full flex items-center justify-center gap-3 transition-all"
+                      className="py-3 px-4 md:text-md text-sm bg-[#7c3aed] text-white font-bold rounded-full flex items-center justify-center gap-3 transition-all"
                     >
                       <FiDownload className="w-5 h-5" />
-                      Download PNG
+                      Download
                     </button>
                     <button
                       onClick={handleReset}
-                      className="py-4 glass-effect border border-white/10 rounded-full font-bold text-lg shadow hover:shadow-md transition-all flex items-center justify-center gap-3"
+                      className="py-3 px-4 md:text-md glass-effect border border-white/10 rounded-full font-bold text-lg shadow hover:shadow-md transition-all flex items-center justify-center gap-3"
                     >
                       <FiTrash2 className="w-5 h-5" />
                       New Image
