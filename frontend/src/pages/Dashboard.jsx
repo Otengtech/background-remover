@@ -68,8 +68,6 @@ const ImageUpload = () => {
       const formData = new FormData();
       formData.append('image', selectedFile);
 
-      toast.info('Removing background... Please wait.');
-
       const response = await axios.post(`${API_URL}/api/process`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -87,11 +85,6 @@ const ImageUpload = () => {
         toast.success(
           <div>
             <div className="font-bold text-lg">✅ Background Removed!</div>
-            <div className="text-sm mt-1">
-              Image processed in {metrics.processingTime}
-              <br />
-              Size reduced by {metrics.reduction}
-            </div>
           </div>,
           { autoClose: 5000 }
         );
@@ -160,7 +153,7 @@ const handleDownload = async () => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
     
-    toast.success(`✅ Image saved as "${filename}"`);
+    toast.success(`✅ Image saved as`);
     
   } catch (error) {
     console.error('Download error:', error);
@@ -178,8 +171,6 @@ const handleDownload = async () => {
     setImageInfo(null);
     setProcessingStats(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
-
-    toast.info('Ready for a new image!');
   };
 
   return (
