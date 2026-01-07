@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+
+Sitemap: https://removerio.bond/sitemap.xml
+
+# Speed up crawling
+Crawl-delay: 1

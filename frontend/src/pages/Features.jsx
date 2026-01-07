@@ -1,5 +1,6 @@
 import { FiZap, FiShield, FiLayers, FiTrendingUp } from "react-icons/fi";
 import { useScrollReveal, useScrollRevealMap } from "../hooks/useIntersectionObserver";
+import MetaTags from "../components/MetaTags";
 
 const Features = () => {
   // Create refs for animations
@@ -37,6 +38,10 @@ const Features = () => {
 
   return (
     <section className="py-16 px-4 md:px-8">
+      <MetaTags
+        title="Remove Backgrounds Instantly | Free AI Background Remover - Removeio"
+        description="Remove image backgrounds instantly with AI. 100% FREE, no signup required."
+      />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">

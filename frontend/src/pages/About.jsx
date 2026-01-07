@@ -1,6 +1,7 @@
 import React from 'react';
 import { FiZap, FiShield, FiGlobe, FiUsers, FiAward } from 'react-icons/fi';
 import { useScrollReveal } from '../hooks/useIntersectionObserver';
+import MetaTags from '../components/MetaTags';
 
 const AboutUs = () => {
   const revealRefs = [
@@ -12,6 +13,10 @@ const AboutUs = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-white py-12 px-4">
+      <MetaTags
+        title="Remove Backgrounds Instantly | Free AI Background Remover - Removeio"
+        description="Remove image backgrounds instantly with AI. 100% FREE, no signup required."
+      />
       <div className="container mx-auto max-w-5xl">
         
         {/* Hero Section */}

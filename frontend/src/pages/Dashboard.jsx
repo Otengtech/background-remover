@@ -3,6 +3,7 @@ import { FiUpload, FiDownload, FiImage, FiTrash2, FiCheck, FiLoader } from 'reac
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import MetaTags from '../components/MetaTags';
 
 const ImageUpload = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -183,7 +184,10 @@ const handleDownload = async () => {
 
   return (
     <div className="min-h-screen p-4 md:p-8">
-      
+      <MetaTags 
+        title="Remove Backgrounds Instantly | Free AI Background Remover - Removeio"
+        description="Remove image backgrounds instantly with AI. 100% FREE, no signup required."
+      />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <header className="text-center mb-12">

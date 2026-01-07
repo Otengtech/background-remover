@@ -1,5 +1,4 @@
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
@@ -17,9 +16,12 @@ import NotFound from "./pages/NotFound";
 import Features from "./pages/Features";
 import About from "./pages/About";
 
+import { HelmetProvider } from "react-helmet-async";
+
 function App() {
   return (
-    <Router>
+    <HelmetProvider>
+      <MetaTags />
       <ScrollToTop />
       <div className="min-h-screen flex flex-col">
         <Navbar />
@@ -47,7 +49,7 @@ function App() {
           theme="dark"
         />
       </div>
-    </Router>
+    </HelmetProvider>
   );
 }
 
