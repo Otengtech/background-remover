@@ -122,26 +122,6 @@ const Home = () => {
                     </Link>
                   </div>
               </div>
-
-              {/* Features Grid */}
-              <div
-                ref={featuresRef}
-                className="scroll-reveal from-bottom stagger-container"
-                style={{ transitionDelay: "0.4s" }}
-              >
-                <div className="grid grid-cols-2 gap-4">
-                  <Feature
-                    icon={<FiCheck />}
-                    text="Secured Payment"
-                    index={0}
-                  />
-                  <Feature
-                    icon={<FiUpload />}
-                    text="Unlimited Uploads"
-                    index={1}
-                  />
-                </div>
-              </div>
             </div>
 
             {/* Right Image */}
