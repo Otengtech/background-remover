@@ -17,6 +17,10 @@ import Features from "./pages/Features";
 import About from "./pages/About";
 
 import { HelmetProvider } from "react-helmet-async";
+import Support from "./pages/Support";
+import Contact from "./pages/Contact";
+import TermsOfService from "./pages/Terms";
+import PrivacyPolicy from "./pages/Privacy";
 
 function App() {
   return (
@@ -30,6 +34,10 @@ function App() {
             <Route path="/features" element={<Features />} />
             <Route path="/about" element={<About />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/404" element={<NotFound />} />
             <Route path="*" element={<Navigate to="/404" />} />
           </Routes>

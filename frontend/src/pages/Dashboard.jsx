@@ -185,7 +185,7 @@ const handleDownload = async () => {
   return (
     <div className="min-h-screen p-4 md:p-8">
       <MetaTags 
-        title="Remove Backgrounds Instantly | Free AI Background Remover - Removeio"
+        title="Remove Backgrounds Instantly | Free AI Background Remover - Removerio"
         description="Remove image backgrounds instantly with AI. 100% FREE, no signup required."
       />
       <div className="max-w-6xl mx-auto">

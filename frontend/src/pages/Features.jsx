@@ -39,15 +39,15 @@ const Features = () => {
   return (
     <section className="py-16 px-4 md:px-8">
       <MetaTags
-        title="Remove Backgrounds Instantly | Free AI Background Remover - Removeio"
-        description="Remove image backgrounds instantly with AI. 100% FREE, no signup required."
+        title="Remove Backgrounds Features | Features Of Our Free AI Background Remover - Removerio"
+        description="See the amazing features of Removerio tool."
       />
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block px-4 py-2 rounded-full bg-primary-500/10 border border-primary-500/20 mb-4">
             <span ref={containerRef} className="scroll-reveal from-bottom text-primary-400 text-sm font-medium">
-              Why Choose Removeio
+              Why Choose Removerio
             </span>
           </div>
           

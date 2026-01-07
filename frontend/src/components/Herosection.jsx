@@ -110,7 +110,7 @@ const Home = () => {
                       to="/dashboard"
                       className="btn-primary px-8 py-4 flex items-center gap-2"
                     >
-                      BG Remover
+                      Start Removing
                       <FiArrowRight />
                     </Link>
                     <Link
@@ -164,7 +164,7 @@ const Home = () => {
             ref={headingRef}
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              About <span className=" text-[#7c3aed]">Removeio</span>
+              About <span className=" text-[#7c3aed]">Removerio</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
               Making background removal simple, fast, and accessible for
@@ -180,7 +180,7 @@ const Home = () => {
             </h2>
             <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 items-center justify-center leading-[2rem] gap-4 text-md text-gray-300">
               <p>
-                Removeio was born from a simple observation: removing
+                Removerio was born from a simple observation: removing
                 backgrounds from images shouldn't require expensive software or
                 complex skills. We saw individuals and businesses struggling
                 with clunky tools and decided to build something better.
@@ -309,7 +309,7 @@ const FeaturesSection = () => {
           ref={sectionRef}
           className="scroll-reveal from-bottom text-center text-4xl md:text-5xl font-bold text-white mb-16"
         >
-          Why Choose Removeio
+          Why Choose Removerio
         </h2>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -362,7 +362,7 @@ const FeaturesSection = () => {
                 to="/dashboard"
                 className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg"
               >
-                To bg remover
+                Start Removing
               </Link>
             </div>
           </div>

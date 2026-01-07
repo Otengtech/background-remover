@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 const MetaTags = ({ 
-  title = "Remove Backgrounds Instantly | Free AI Background Remover - Removeio",
+  title = "Remove Backgrounds Instantly | Free AI Background Remover - Removerio",
   description = "Remove image backgrounds instantly with AI. 100% FREE, no signup required. Process JPG, PNG in seconds. Perfect for ecommerce, social media & creative projects.",
   keywords = "Free background remover online, remove background from image free no signup, AI background removal tool, transparent background maker, remove background for ecommerce product photos, social media profile picture background remover, batch background removal, online photo editor remove background, delete background from photo, extract subject from image, isolate object from background, create transparent PNG online",
   ogImage = "https://removerio.bond/og-image.png",
@@ -34,7 +34,7 @@ const MetaTags = ({
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebApplication",
-          "name": "Removeio - Free AI Background Remover",
+          "name": "Removerio - Free AI Background Remover",
           "description": description,
           "url": canonicalUrl,
           "applicationCategory": "DesignApplication",

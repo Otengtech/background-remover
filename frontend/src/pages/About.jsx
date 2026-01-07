@@ -14,15 +14,15 @@ const AboutUs = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-white py-12 px-4">
       <MetaTags
-        title="Remove Backgrounds Instantly | Free AI Background Remover - Removeio"
-        description="Remove image backgrounds instantly with AI. 100% FREE, no signup required."
+        title="About page for Removerio | Know more about Removerio"
+        description="Removerio is one of the powerful accepted website that provide best background removing tool."
       />
       <div className="container mx-auto max-w-5xl">
         
         {/* Hero Section */}
         <div className="text-center scroll-reveal from-bottom mb-16" ref={revealRefs[0]}>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            About <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">Removeio</span>
+            About <span className="bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">Removerio</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Making background removal simple, fast, and accessible for everyone
@@ -37,7 +37,7 @@ const AboutUs = () => {
           </h2>
           <div className="space-y-4 text-gray-300">
             <p>
-              Removeio was born from a simple observation: removing backgrounds from images 
+              Removerio was born from a simple observation: removing backgrounds from images 
               shouldn't require expensive software or complex skills. We saw individuals and 
               businesses struggling with clunky tools and decided to build something better.
             </p>
@@ -94,7 +94,7 @@ const AboutUs = () => {
         <div className="scroll-reveal from-bottom bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-2xl p-8 mb-12" ref={revealRefs[3]}>
           <h2 className="text-2xl font-bold mb-6 flex items-center">
             <FiAward className="mr-3 text-yellow-400" />
-            Why Choose Removeio?
+            Why Choose Removerio?
           </h2>
           <div className="space-y-6">
             <div className="flex items-start">

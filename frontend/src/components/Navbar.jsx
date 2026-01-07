@@ -52,7 +52,7 @@ const Navbar = () => {
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
               <span className="text-xl font-bold text-[#7c3aed]">
-                Removeio
+                Removerio
               </span>
             </Link>
 
@@ -67,11 +67,14 @@ const Navbar = () => {
               <Link to="/features" className="text-gray-300 hover:text-white transition-colors duration-200">
                 Features
               </Link>
+              <Link to="/support" className="text-gray-300 hover:text-white transition-colors duration-200">
+                Support
+              </Link>
               <Link to="/about" className="text-gray-300 hover:text-white transition-colors duration-200">
                 About
               </Link>
-              <Link to="/support" className="text-gray-300 hover:text-white transition-colors duration-200">
-                Support
+              <Link to="/contact" className="text-gray-300 hover:text-white transition-colors duration-200">
+                Contact
               </Link>
             </div>
 
@@ -116,7 +119,7 @@ const Navbar = () => {
                   <FiImage className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold text-primary-100">
-                  Removeio
+                  Removerio
                 </span>
               </Link>
               <button
@@ -168,6 +171,14 @@ const Navbar = () => {
               >
                 <FaRegAddressBook className="w-5 h-5" />
                 <span>About</span>
+              </Link>
+              <Link
+                to="/contact"
+                onClick={handleNavLinkClick}
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200"
+              >
+                <FaRegAddressBook className="w-5 h-5" />
+                <span>Contact</span>
               </Link>
             </div>
           </div>

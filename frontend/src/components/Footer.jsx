@@ -9,13 +9,10 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">R</span>
-              </div>
-              <span className="text-xl font-bold">Removeio</span>
+              <span className="text-xl font-bold text-purple-500">Removerio</span>
             </div>
             <p className="text-gray-400 text-sm">
-              Professional background removal tool powered by AI.
+              Professional background removal tool powered by AI. Instant processing and providing security at all times.
             </p>
           </div>
 
@@ -51,6 +48,16 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
+                <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
                 <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">
                   Privacy Policy
                 </Link>
@@ -60,11 +67,6 @@ const Footer = () => {
                   Terms of Service
                 </Link>
               </li>
-              <li>
-                <Link to="/cookies" className="text-gray-400 hover:text-white transition-colors">
-                  Cookie Policy
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -72,7 +74,7 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Contact</h3>
             <div className="space-y-4">
-              <p className="text-gray-400">support@removeit.com</p>
+              <p className="text-gray-400">otengebenezer323@gmail.com</p>
               <div className="flex space-x-4">
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
                   <FiGithub className="w-5 h-5" />
@@ -89,7 +91,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-white/10 mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>© {new Date().getFullYear()} Removeio. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Removerio. All rights reserved.</p>
         </div>
       </div>
     </footer>
