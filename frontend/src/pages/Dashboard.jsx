@@ -362,7 +362,7 @@ const handleDownload = async () => {
                     </button>
                     <button
                       onClick={handleReset}
-                      className="py-3 px-4 md:text-md glass-effect border border-white/10 rounded-full font-bold text-lg shadow hover:shadow-md transition-all flex items-center justify-center gap-3"
+                      className="py-3 px-4 md:text-md text-sm glass-effect border border-white/10 rounded-full font-bold text-lg shadow hover:shadow-md transition-all flex items-center justify-center gap-3"
                     >
                       <FiTrash2 className="w-5 h-5" />
                       New Image
