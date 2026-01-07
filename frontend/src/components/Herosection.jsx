@@ -18,6 +18,7 @@ import {
   FiUsers,
   FiClock,
 } from "react-icons/fi";
+import MetaTags from '../components/MetaTags';
 
 const Home = () => {
 
@@ -64,6 +65,10 @@ const Home = () => {
 
   return (
     <div className="">
+      <MetaTags
+        title="Remove Backgrounds Instantly | Free AI Background Remover - Removerio"
+        description="Remove image backgrounds instantly with AI. 100% FREE, no signup required."
+      />
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden md:px-20 pt-20">
         <div className="container mx-auto px-6 relative z-20">
