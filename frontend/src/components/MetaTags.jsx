@@ -11,7 +11,7 @@ const MetaTags = ({
   keywords = "Free background remover online, remove background from image free no signup, AI background removal tool, transparent background maker, remove background for ecommerce product photos, social media profile picture background remover, batch background removal, online photo editor remove background, delete background from photo, extract subject from image, isolate object from background, create transparent PNG online",
   
   // FIXED: Use your logo for now, but create og-image.png
-  ogImage = "https://www.removerio.bond/og-image.html",
+  ogImage = "https://www.removerio.bond/og-image.avif",
   
   // FIXED: Optional - for specific pages
   pageTitle = "",

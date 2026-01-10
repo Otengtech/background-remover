@@ -1,4 +1,3 @@
-import React from 'react';
 import { FiZap, FiShield, FiGlobe, FiUsers, FiAward } from 'react-icons/fi';
 import { useScrollReveal } from '../hooks/useIntersectionObserver';
 import MetaTags from '../components/MetaTags';
@@ -15,7 +14,7 @@ const AboutUs = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 text-white py-12 px-4">
       <MetaTags
         title="About page for Removerio | Know more about Removerio"
-        description="Removerio is one of the powerful accepted website that provide best background removing tool."
+        description="Removerio is one of the powerful accepted website that provide best background removing tool. Best for fast, quality and protected features."
       />
       <div className="container mx-auto max-w-5xl">
         
