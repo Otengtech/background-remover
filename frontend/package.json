@@ -5,10 +5,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start:server": "node index.js"
+    "start:server": "node index.js",
+    "start": "react-scripts start",
+    "build": "react-scripts build && react-snap",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "reactSnap": {
+    "source": "build",
+    "inlineCss": true,
+    "minifyHtml": {
+      "collapseWhitespace": true,
+      "removeComments": true
+    },
+    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
+    "skipThirdPartyRequests": true
   },
   "dependencies": {
     "axios": "^1.13.2",

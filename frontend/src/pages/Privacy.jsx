@@ -35,7 +35,7 @@ const PrivacyPolicy = () => {
       <Helmet>
         <title>Privacy Policy | Removerio AI Background Remover</title>
         <meta name="description" content="Privacy policy for Removerio. Learn how we protect your images and privacy." />
-        <link rel="canonical" href="https://removerio.bond/privacy" />
+        <link rel="canonical" href="https://www.removerio.bond/privacy" />
       </Helmet>
 
       <div className="min-h-screen py-12 px-4">

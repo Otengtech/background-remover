@@ -44,7 +44,7 @@ const Support = () => {
       <Helmet>
         <title>Support & Help Center | Removerio AI Background Remover</title>
         <meta name="description" content="Get help with Removerio. FAQs, guides, and support for our free AI background removal tool." />
-        <link rel="canonical" href="https://removerio.bond/support" />
+        <link rel="canonical" href="https://www.removerio.bond/support" />
       </Helmet>
 
       <div className="min-h-screen py-12 px-4">
