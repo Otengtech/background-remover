@@ -1,3 +1,11 @@
 User-agent: *
 Allow: /
+Content-signal: search=yes,ai-train=no
 Sitemap: https://removerio.bond/sitemap.xml
+
+# Optional: Specific bot blocks (remove Google-Extended from this list)
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
