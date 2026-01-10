@@ -1,12 +1,19 @@
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 
 const MetaTags = ({ 
   title = "Remove Backgrounds Instantly | Free AI Background Remover - Removerio",
   description = "Remove image backgrounds instantly with AI. 100% FREE, no signup required. Process JPG, PNG in seconds. Perfect for ecommerce, social media & creative projects.",
   keywords = "Free background remover online, remove background from image free no signup, AI background removal tool, transparent background maker, remove background for ecommerce product photos, social media profile picture background remover, batch background removal, online photo editor remove background, delete background from photo, extract subject from image, isolate object from background, create transparent PNG online",
-  ogImage = "https://removerio.bond/og-image.png",
-  canonicalUrl = "https://removerio.bond"
+  ogImage = "https://www.removerio.bond/og-image.png",
+  // REMOVE canonicalUrl from props, we'll generate it dynamically
 }) => {
+  const location = useLocation();
+  
+  // Always use www version
+  const baseUrl = "https://www.removerio.bond";
+  const canonicalUrl = `${baseUrl}${location.pathname}`;
+  
   return (
     <Helmet>
       {/* Basic Meta Tags */}
@@ -34,7 +41,7 @@ const MetaTags = ({
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebApplication",
-          "name": "Removerio - Free AI Background Remover",
+          "name": "Removerio - Free Background Remover",
           "description": description,
           "url": canonicalUrl,
           "applicationCategory": "DesignApplication",
@@ -44,7 +51,7 @@ const MetaTags = ({
             "price": "0",
             "priceCurrency": "USD"
           },
-          "featureList": "Free, Fast, No Watermark, No Signup, Batch Processing"
+          "featureList": "Free, Fast, No Watermark, No Signup, No Payments, Single Processing"
         })}
       </script>
     </Helmet>
