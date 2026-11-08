@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "start:server": "node index.js",
     "start": "react-scripts start",
-    "build": "react-scripts build && react-snap",
+    "build": "vite build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
